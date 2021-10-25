@@ -1,6 +1,6 @@
 grammar Mx;
 
-program : (declarationStmt | functionDef | classDef)*;
+program : (varDef | functionDef | classDef)*;
 
 functionDef : returnType Identifier '(' functionParameterDef ')' suite;
 
@@ -11,22 +11,17 @@ parameterList : expression(',' expression)*;
 suite : '{' statement * '}';
 
 statement
-    : suite
-    | declarationStmt
+    : suite                                                                                #block
+    | varDef                                                                               #varDefStmt
     | If '(' expression ')' trueStmt=statement
-        (Else falseStmt=statement)?
-    | For '(' (expression | varDef)? ';' (expression)? ';' (expression)? ')' statement
-    | Continue ';'
-    | Break ';'
-    | Return expression? ';'
-    | expression?';'
+        (Else falseStmt=statement)?                                                        #ifStmt
+    | For '(' (expression | varDef)? ';' (expression)? ';' (expression)? ')' statement     #forStmt
+    | Continue ';'                                                                         #continueStmt
+    | Break ';'                                                                            #breakStmt
+    | Return expression? ';'                                                               #returnStmt
+    | While expression ? statement                                                         #whileStmt
+    | expression?';'                                                                       #expressionStmt
     ;
-
-declarationStmt
-    : varDef ';'
-    | classDef ';'
-    ;
-
 
 varDef : varType varDeclaration (',' varDeclaration)*;
 
@@ -41,28 +36,28 @@ classFunctionDef : functionDef
                  | classConstructFuncDef
                  ;
 
-classConstructFuncDef : Identifier '(' ')' suite;
+classConstructFuncDef : Identifier '(' functionParameterDef ')' suite;
 
 expression
-    : primary
-    | New scaledType
-    | expression '[' expression ']'
-    | expression '(' parameterList? ')'
-    | expression op=('++'|'--')
-    | expression '.' Identifier
-    | expression op=('+'|'-') expression
-    | expression op=('*'|'/'|'%') expression
-    | expression op=('<<'|'>>') expression
-    | expression op=('<'|'<='|'>'|'>=') expression
-    | expression op=('=='|'!=') expression
-    | expression op=('&'|'^'|'|') expression
-    | expression op='&&' expression
-    | expression op='||' expression
-    | <assoc=right> op=('++'|'--') expression
-    | <assoc=right> op=('+'|'-') expression
-    | <assoc=right> op=('!'|'~') expression
-    | <assoc=right> expression '=' expression
-    | lamdaexpression
+    : primary                                                                              #atomExpr
+    | New scaledType                                                                       #newExpr
+    | expression '[' expression ']'                                                        #subarrayExpr
+    | expression '(' parameterList? ')'                                                    #funcExpr
+    | expression op=('++'|'--')                                                            #suffixExpr
+    | expression '.' Identifier                                                            #memberExpr
+    | expression op=('+'|'-') expression                                                   #binaryExpr
+    | expression op=('*'|'/'|'%') expression                                               #binaryExpr
+    | expression op=('<<'|'>>') expression                                                 #binaryExpr
+    | expression op=('<'|'<='|'>'|'>=') expression                                         #binaryExpr
+    | expression op=('=='|'!=') expression                                                 #binaryExpr
+    | expression op=('&'|'^'|'|') expression                                               #binaryExpr
+    | expression op='&&' expression                                                        #binaryExpr
+    | expression op='||' expression                                                        #binaryExpr
+    | <assoc=right> op=('++'|'--') expression                                              #prefixExpr
+    | <assoc=right> op=('+'|'-') expression                                                #prefixExpr
+    | <assoc=right> op=('!'|'~') expression                                                #prefixExpr
+    | <assoc=right> expression '=' expression                                              #assignExpr
+    | lamdaexpression                                                                      #lambdaExpr
     ;
 
 lamdaexpression :'[&]' ('(' functionParameterDef ')')? '->' suite;
@@ -106,6 +101,7 @@ This : 'this';
 Continue : 'continue';
 Break : 'break';
 Null : 'NULL';
+While : 'while';
 
 Dot : '.';
 LeftParen : '(';
