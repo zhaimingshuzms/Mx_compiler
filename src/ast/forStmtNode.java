@@ -4,9 +4,9 @@ import util.position;
 
 public class forStmtNode extends StmtNode{
     public ExprNode prework,condition,loopwork;
-    public varDefNode varDef;
-    public suiteNode loopsuite;
-    public forStmtNode(ExprNode prework,ExprNode condition,ExprNode loopwork,suiteNode loopsuite,position pos){
+    public varDefListNode varDef;
+    public suiteStmtNode loopsuite;
+    public forStmtNode(ExprNode prework,ExprNode condition,ExprNode loopwork,suiteStmtNode loopsuite,position pos){
         super(pos);
         this.prework=prework;
         this.varDef=null;
@@ -14,7 +14,7 @@ public class forStmtNode extends StmtNode{
         this.loopwork=loopwork;
         this.loopsuite=loopsuite;
     }
-    public forStmtNode(varDefNode varDef,ExprNode condition,ExprNode loopwork,suiteNode loopsuite,position pos){
+    public forStmtNode(varDefListNode varDef,ExprNode condition,ExprNode loopwork,suiteStmtNode loopsuite,position pos){
         super(pos);
         this.prework=null;
         this.varDef=varDef;
@@ -22,7 +22,7 @@ public class forStmtNode extends StmtNode{
         this.loopwork=loopwork;
         this.loopsuite=loopsuite;
     }
-    public forStmtNode(ExprNode condition,ExprNode loopwork,suiteNode loopsuite,position pos){
+    public forStmtNode(ExprNode condition,ExprNode loopwork,suiteStmtNode loopsuite,position pos){
         super(pos);
         this.prework=null;
         this.varDef=null;

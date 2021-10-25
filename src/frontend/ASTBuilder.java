@@ -53,6 +53,45 @@ public class ASTBuilder extends MxBaseVisitor <ASTNode>{
     }
 
     @Override
+    public ASTNode visitBlock(MxParser.BlockContext ctx){
+        return (suiteStmtNode)visit(ctx.suite());
+    }
+
+    @Override
+    public ASTNode visitVarDefStmt(MxParser.VarDefStmtContext ctx){
+        varDefStmt node=new varDefStmt((varDefListNode)visit(ctx.varDef()),new position(ctx));
+        return node;
+    }
+
+    @Override
+    public ASTNode visitIfStmt(MxParser.IfStmtContext ctx){
+        StmtNode thenStmt=(StmtNode)visit(ctx.trueStmt),elseStmt=null;
+        ExprNode condition=(ExprNode)visit(ctx.expression());
+        if (ctx.falseStmt!=null) elseStmt=(StmtNode)visit(ctx.falseStmt);
+        return new ifStmtNode(condition,thenStmt,elseStmt,new position(ctx));
+    }
+
+    @Override
+    public ASTNode visitForStmt(MxParser.ForStmtContext ctx){
+        forStmtNode node;
+        ExprNode condition= ctx.condition == null ? null : (ExprNode)visit(ctx.condition);
+        ExprNode loopexpression= ctx.loopexpression == null ? null : (ExprNode)visit(ctx.loopexpression);
+        suiteStmtNode suite;
+        StmtNode tmp=(StmtNode)visit(ctx.statement());
+        if (tmp instanceof suiteStmtNode){
+            suite=(suiteStmtNode) tmp;
+        }
+        else {
+            suite=new suiteStmtNode(tmp.pos);
+            suite.innerStmt.add(tmp);
+        }
+        if (ctx.prework.isEmpty()) node=new forStmtNode((varDefListNode)visit(ctx.prevar),condition,loopexpression,suite,new position(ctx));
+        else if (ctx.prevar.isEmpty()) node=new forStmtNode((ExprNode)visit(ctx.prework),condition,loopexpression,suite,new position(ctx));
+        else node=new forStmtNode(condition,loopexpression,suite,new position(ctx));
+        return node;
+    }
+    //above is verified.
+    @Override
     public ASTNode visitFunctionDef(MxParser.FunctionDefContext ctx){
         funcDefNode node=new funcDefNode((returnTypeNode)visit(ctx.returnType()),ctx.Identifier().getText(),
                 ((varDefListNode) visit(ctx.functionParameterDef())).varList,(suiteStmtNode)visit(ctx.suite()),new position(ctx));
@@ -80,14 +119,6 @@ public class ASTBuilder extends MxBaseVisitor <ASTNode>{
         ExprNode value=null;
         if (ctx.expression()!=null) value=(ExprNode) visit(ctx.expression());
         return new returnStmtNode(value,new position(ctx));
-    }
-
-    @Override
-    public ASTNode visitIfStmt(MxParser.IfStmtContext ctx){
-        StmtNode thenStmt=(StmtNode)visit(ctx.trueStmt),elseStmt=null;
-        ExprNode condition=(ExprNode)visit(ctx.expression());
-        if (ctx.falseStmt!=null) elseStmt=(StmtNode)visit(ctx.falseStmt);
-        return new ifStmtNode(condition,thenStmt,elseStmt,new position(ctx));
     }
 
     @Override

@@ -15,7 +15,7 @@ statement
     | varDef                                                                               #varDefStmt
     | If '(' expression ')' trueStmt=statement
         (Else falseStmt=statement)?                                                        #ifStmt
-    | For '(' (expression | varDef)? ';' (expression)? ';' (expression)? ')' statement     #forStmt
+    | For '(' (prework=expression |prevar=varDef)? ';' (condition=expression)? ';' (loopexpression=expression)? ')' statement     #forStmt
     | Continue ';'                                                                         #continueStmt
     | Break ';'                                                                            #breakStmt
     | Return expression? ';'                                                               #returnStmt

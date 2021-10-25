@@ -522,6 +522,10 @@ public class MxParser extends Parser {
 		}
 	}
 	public static class ForStmtContext extends StatementContext {
+		public ExpressionContext prework;
+		public VarDefContext prevar;
+		public ExpressionContext condition;
+		public ExpressionContext loopexpression;
 		public TerminalNode For() { return getToken(MxParser.For, 0); }
 		public TerminalNode LeftParen() { return getToken(MxParser.LeftParen, 0); }
 		public List<TerminalNode> Semi() { return getTokens(MxParser.Semi); }
@@ -773,13 +777,13 @@ public class MxParser extends Parser {
 				case 1:
 					{
 					setState(98);
-					expression(0);
+					((ForStmtContext)_localctx).prework = expression(0);
 					}
 					break;
 				case 2:
 					{
 					setState(99);
-					varDef();
+					((ForStmtContext)_localctx).prevar = varDef();
 					}
 					break;
 				}
@@ -791,7 +795,7 @@ public class MxParser extends Parser {
 				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__0) | (1L << True) | (1L << False) | (1L << New) | (1L << This) | (1L << Null) | (1L << LeftParen) | (1L << Plus) | (1L << SelfPlus) | (1L << Minus) | (1L << SelfMinus) | (1L << Not) | (1L << Tilde) | (1L << Identifier) | (1L << DecimalInteger) | (1L << StringLiteral))) != 0)) {
 					{
 					setState(103);
-					expression(0);
+					((ForStmtContext)_localctx).condition = expression(0);
 					}
 				}
 
@@ -803,7 +807,7 @@ public class MxParser extends Parser {
 				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__0) | (1L << True) | (1L << False) | (1L << New) | (1L << This) | (1L << Null) | (1L << LeftParen) | (1L << Plus) | (1L << SelfPlus) | (1L << Minus) | (1L << SelfMinus) | (1L << Not) | (1L << Tilde) | (1L << Identifier) | (1L << DecimalInteger) | (1L << StringLiteral))) != 0)) {
 					{
 					setState(107);
-					expression(0);
+					((ForStmtContext)_localctx).loopexpression = expression(0);
 					}
 				}
 
