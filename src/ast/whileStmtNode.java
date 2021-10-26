@@ -4,9 +4,9 @@ import util.position;
 
 public class whileStmtNode extends StmtNode{
     public ExprNode condition;
-    public StmtNode loopbody;
+    public suiteStmtNode loopbody;
 
-    public whileStmtNode(ExprNode condition,StmtNode loopbody,position pos){
+    public whileStmtNode(ExprNode condition,suiteStmtNode loopbody,position pos){
         super(pos);
         this.condition=condition;
         this.loopbody=loopbody;

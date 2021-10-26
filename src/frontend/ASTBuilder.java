@@ -90,14 +90,65 @@ public class ASTBuilder extends MxBaseVisitor <ASTNode>{
         else node=new forStmtNode(condition,loopexpression,suite,new position(ctx));
         return node;
     }
-    //above is verified.
+
     @Override
-    public ASTNode visitFunctionDef(MxParser.FunctionDefContext ctx){
-        funcDefNode node=new funcDefNode((returnTypeNode)visit(ctx.returnType()),ctx.Identifier().getText(),
-                ((varDefListNode) visit(ctx.functionParameterDef())).varList,(suiteStmtNode)visit(ctx.suite()),new position(ctx));
-        return node;
+    public ASTNode visitContinueStmt(MxParser.ContinueStmtContext ctx){
+        continueStmtNode tmp=new continueStmtNode(new position(ctx));
+        return tmp;
     }
 
+    @Override
+    public ASTNode visitBreakStmt(MxParser.BreakStmtContext ctx){
+        breakStmtNode tmp=new breakStmtNode(new position(ctx));
+        return tmp;
+    }
+
+    @Override
+    public ASTNode visitReturnStmt(MxParser.ReturnStmtContext ctx){
+        ExprNode value=null;
+        if (ctx.expression()!=null) value=(ExprNode) visit(ctx.expression());
+        return new returnStmtNode(value,new position(ctx));
+    }
+
+    @Override
+    public ASTNode visitWhileStmt(MxParser.WhileStmtContext ctx){
+        suiteStmtNode suite;
+        StmtNode tmp=(StmtNode) visit(ctx.statement());
+        if (tmp instanceof suiteStmtNode){
+            suite=(suiteStmtNode) tmp;
+        }
+        else {
+            suite=new suiteStmtNode(tmp.pos);
+            suite.innerStmt.add(tmp);
+        }
+        return new whileStmtNode((ExprNode) visit(ctx.expression()),suite,new position(ctx));
+    }
+
+    @Override
+    public ASTNode visitExpressionStmt(MxParser.ExpressionStmtContext ctx){
+        return new exprStmtNode((ExprNode)visit(ctx.expression()),new position(ctx));
+    }
+
+    @Override
+    public ASTNode visitVarDef(MxParser.VarDefContext ctx){
+        varTypeNode varType=(varTypeNode) visit(ctx.varType());
+        varDefListNode ret=new varDefListNode(new position(ctx));
+        for (var i : ctx.varDeclaration()){
+            var tmp=(varDefNode)visit(i);
+            tmp.type=varType;
+            ret.varList.add(tmp);
+        }
+        return ret;
+    }
+
+    @Override
+    public ASTNode visitVarDeclaration(MxParser.VarDeclarationContext ctx){
+        if (!ctx.expression().isEmpty()){
+            ExprNode expr=(ExprNode)visit(ctx.expression());
+            return new varDefNode(ctx.Identifier().getText(),expr,new position(ctx));
+        }
+        return new varDefNode(ctx.Identifier().getText(),null,new position(ctx));
+    }
     @Override
     public ASTNode visitClassDef(MxParser.ClassDefContext ctx){
         classDefNode classDef=new classDefNode(new position(ctx),ctx.Identifier().toString());
@@ -114,23 +165,13 @@ public class ASTBuilder extends MxBaseVisitor <ASTNode>{
         return funcDef;
     }
 
-    @Override
-    public ASTNode visitReturnStmt(MxParser.ReturnStmtContext ctx){
-        ExprNode value=null;
-        if (ctx.expression()!=null) value=(ExprNode) visit(ctx.expression());
-        return new returnStmtNode(value,new position(ctx));
-    }
+    //above is verified.
 
     @Override
-    public ASTNode visitContinueStmt(MxParser.ContinueStmtContext ctx){
-        continueStmtNode tmp=new continueStmtNode(new position(ctx));
-        return tmp;
-    }
-
-    @Override
-    public ASTNode visitBreakStmt(MxParser.BreakStmtContext ctx){
-        breakStmtNode tmp=new breakStmtNode(new position(ctx));
-        return tmp;
+    public ASTNode visitFunctionDef(MxParser.FunctionDefContext ctx){
+        funcDefNode node=new funcDefNode((returnTypeNode)visit(ctx.returnType()),ctx.Identifier().getText(),
+                ((varDefListNode) visit(ctx.functionParameterDef())).varList,(suiteStmtNode)visit(ctx.suite()),new position(ctx));
+        return node;
     }
 
     @Override

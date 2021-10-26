@@ -7,10 +7,11 @@ public class varDefNode extends StmtNode{
     public String identifier;
     public ExprNode expression;
 
-    public varDefNode(varTypeNode type, String identifier, position pos){
+    public varDefNode(String identifier, ExprNode expression,position pos){
         super(pos);
-        this.type=type;
+        this.type=null;
         this.identifier=identifier;
+        this.expression=expression;
     }
     @Override
     public void accept(ASTVisitor visitor){
