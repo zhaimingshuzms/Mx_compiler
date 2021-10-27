@@ -7,9 +7,9 @@ import java.util.ArrayList;
 
 public class funcExprNode extends ExprNode{
     public ExprNode expression;
-    public ArrayList<ExprNode> parameterlist;
+    public exprListNode parameterlist;
     public Symbol symbol;
-    public funcExprNode(ExprNode expression, ArrayList<ExprNode> parameterlist, position pos){
+    public funcExprNode(ExprNode expression, exprListNode parameterlist, position pos){
         super(pos);
         this.expression=expression;
         this.parameterlist=parameterlist;

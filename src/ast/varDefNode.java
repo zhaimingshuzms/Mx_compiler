@@ -7,6 +7,18 @@ public class varDefNode extends StmtNode{
     public String identifier;
     public ExprNode expression;
 
+    public varDefNode(varTypeNode type,String identifier, ExprNode expression,position pos){
+        super(pos);
+        this.type=type;
+        this.identifier=identifier;
+        this.expression=expression;
+    }
+    public varDefNode(varTypeNode type,String identifier,position pos){
+        super(pos);
+        this.type=type;
+        this.identifier=identifier;
+        this.expression=null;
+    }
     public varDefNode(String identifier, ExprNode expression,position pos){
         super(pos);
         this.type=null;

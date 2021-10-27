@@ -165,8 +165,41 @@ public class ASTBuilder extends MxBaseVisitor <ASTNode>{
         return funcDef;
     }
 
-    //above is verified.
+    @Override
+    public ASTNode visitAtomExpr(MxParser.AtomExprContext ctx){
+        return (primaryExprNode)visit(ctx.primary());
+    }
 
+    public ASTNode visitPrimary(MxParser.PrimaryContext ctx){
+        if (ctx.expression()!=null){
+            return new exprPrimaryNode((ExprNode) visit(ctx.expression()),new position(ctx));
+        }
+        else if (ctx.Identifier()!=null){
+            return new identifierPrimaryNode(ctx.Identifier().getText(),new position(ctx));
+        }
+        else if (ctx.This()!=null){
+            return new thisPrimaryNode(new position(ctx));
+        }
+        else if (ctx.literal()!=null){
+            return (literalPrimaryNode)visit(ctx.literal());
+        }
+    }
+
+    @Override
+    public ASTNode visitNewExpr(MxParser.NewExprContext ctx){
+        return new newExprNode((scaledTypeNode)visit(ctx.scaledType()),new position(ctx));
+    }
+
+    @Override
+    public ASTNode visitSubarrayExpr(MxParser.SubarrayExprContext ctx){
+        return new subarrayExprNode((ExprNode)visit(ctx.expression(0)),(ExprNode)visit(ctx.expression(1)),new position(ctx));
+    }
+
+    @Override
+    public ASTNode visitFuncExpr(MxParser.FuncExprContext ctx){
+        return new funcExprNode((ExprNode)visit(ctx.expression()),(exprListNode) visit(ctx.parameterList()),new position(ctx));
+    }
+    //above is verified.
     @Override
     public ASTNode visitFunctionDef(MxParser.FunctionDefContext ctx){
         funcDefNode node=new funcDefNode((returnTypeNode)visit(ctx.returnType()),ctx.Identifier().getText(),
