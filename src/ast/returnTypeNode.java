@@ -4,9 +4,9 @@ import util.position;
 
 public class returnTypeNode extends ASTNode{
     public varTypeNode type;
-    public returnTypeNode(position pos){
+    public returnTypeNode(varTypeNode type,position pos){
         super(pos);
-        type=null;
+        this.type=type;
     }
 
     @Override

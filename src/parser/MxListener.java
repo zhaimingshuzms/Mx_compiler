@@ -376,15 +376,29 @@ public interface MxListener extends ParseTreeListener {
 	 */
 	void exitVarType(MxParser.VarTypeContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link MxParser#scaledType}.
+	 * Enter a parse tree produced by the {@code basicType}
+	 * labeled alternative in {@link MxParser#scaledType}.
 	 * @param ctx the parse tree
 	 */
-	void enterScaledType(MxParser.ScaledTypeContext ctx);
+	void enterBasicType(MxParser.BasicTypeContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link MxParser#scaledType}.
+	 * Exit a parse tree produced by the {@code basicType}
+	 * labeled alternative in {@link MxParser#scaledType}.
 	 * @param ctx the parse tree
 	 */
-	void exitScaledType(MxParser.ScaledTypeContext ctx);
+	void exitBasicType(MxParser.BasicTypeContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code arrayType}
+	 * labeled alternative in {@link MxParser#scaledType}.
+	 * @param ctx the parse tree
+	 */
+	void enterArrayType(MxParser.ArrayTypeContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code arrayType}
+	 * labeled alternative in {@link MxParser#scaledType}.
+	 * @param ctx the parse tree
+	 */
+	void exitArrayType(MxParser.ArrayTypeContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link MxParser#builtinType}.
 	 * @param ctx the parse tree

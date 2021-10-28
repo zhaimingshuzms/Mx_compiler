@@ -199,12 +199,23 @@ public class ASTBuilder extends MxBaseVisitor <ASTNode>{
     public ASTNode visitFuncExpr(MxParser.FuncExprContext ctx){
         return new funcExprNode((ExprNode)visit(ctx.expression()),(exprListNode) visit(ctx.parameterList()),new position(ctx));
     }
-    //above is verified.
+
     @Override
     public ASTNode visitFunctionDef(MxParser.FunctionDefContext ctx){
         funcDefNode node=new funcDefNode((returnTypeNode)visit(ctx.returnType()),ctx.Identifier().getText(),
                 ((varDefListNode) visit(ctx.functionParameterDef())).varList,(suiteStmtNode)visit(ctx.suite()),new position(ctx));
         return node;
+    }
+
+    @Override
+    public ASTNode visitSuffixExpr(MxParser.SuffixExprContext ctx){
+        if (ctx.SelfPlus()!=null) return new suffixExprNode((ExprNode)visit(ctx.expression()),suffixExprNode.suffixOpType.SelfPlus,new position(ctx));
+        else if (ctx.SelfMinus()!=null) return new suffixExprNode((ExprNode)visit(ctx.expression()),suffixExprNode.suffixOpType.SelfMinus,new position(ctx));
+    }
+
+    @Override
+    public ASTNode visitMemberExpr(MxParser.MemberExprContext ctx){
+        return new memberExprNode((ExprNode) visit(ctx.expression()),ctx.Identifier().getText(),new position(ctx));
     }
 
     @Override
@@ -231,9 +242,82 @@ public class ASTBuilder extends MxBaseVisitor <ASTNode>{
     }
 
     @Override
+    public ASTNode visitPrefixExpr(MxParser.PrefixExprContext ctx){
+        if (ctx.SelfPlus()!=null){
+            return new prefixExprNode(prefixExprNode.prefixOpType.SelfPlus,(ExprNode)visit(ctx.expression()),new position(ctx));
+        }
+        else if (ctx.SelfMinus()!=null){
+            return new prefixExprNode(prefixExprNode.prefixOpType.SelfMinus,(ExprNode)visit(ctx.expression()),new position(ctx));
+        }
+        else if (ctx.Plus()!=null){
+            return new prefixExprNode(prefixExprNode.prefixOpType.Plus,(ExprNode)visit(ctx.expression()),new position(ctx));
+        }
+        else if (ctx.Minus()!=null){
+            return new prefixExprNode(prefixExprNode.prefixOpType.Minus,(ExprNode)visit(ctx.expression()),new position(ctx));
+        }
+        else if (ctx.Not()!=null){
+            return new prefixExprNode(prefixExprNode.prefixOpType.Not,(ExprNode)visit(ctx.expression()),new position(ctx));
+        }
+        else if (ctx.Tilde()!=null){
+            return new prefixExprNode(prefixExprNode.prefixOpType.Tilde,(ExprNode)visit(ctx.expression()),new position(ctx));
+        }
+    }
+    @Override
     public ASTNode visitAssignExpr(MxParser.AssignExprContext ctx){
         ExprNode lhs=(ExprNode)visit(ctx.expression(0)),
                  rhs=(ExprNode)visit(ctx.expression(1));
         return new assignExprNode(lhs,rhs,new position(ctx));
     }
+
+    @Override
+    public ASTNode visitReturnType(MxParser.ReturnTypeContext ctx){
+        if (ctx.varType()!=null) return new returnTypeNode((varTypeNode)visit(ctx.varType()),new position(ctx));
+        return new returnTypeNode(null,new position(ctx));
+    }
+
+    @Override
+    public ASTNode visitVarType(MxParser.VarTypeContext ctx){
+        if (ctx.varType()!=null){
+            varTypeNode tmp=(varTypeNode)visit(ctx);
+            return new varTypeNode(tmp.type,ctx.LeftBracket().size(),tmp.pos);
+        }
+        else if (ctx.Identifier()!=null){
+            return new varTypeNode(ctx.Identifier().getText(),new position(ctx));
+        }
+        else if (ctx.builtinType()!=null)
+            return new varTypeNode(ctx.builtinType().getText(),new position(ctx));
+    }
+
+    @Override
+    public ASTNode visitBasicType(MxParser.BasicTypeContext ctx){
+        if (ctx.builtinType()!=null){
+            return new scaledTypeNode(new varTypeNode(ctx.builtinType().getText(),new position(ctx)),new position(ctx));
+        }
+        else if (ctx.Identifier()!=null)
+            return new scaledTypeNode(new varTypeNode(ctx.Identifier().getText(),new position(ctx)),new position(ctx));
+    }
+
+    @Override
+    public ASTNode visitArrayType(MxParser.ArrayTypeContext ctx){
+        String s;
+        if (ctx.builtinType()!=null) s=ctx.builtinType().getText();
+        else s=ctx.Identifier().getText();
+        scaledTypeNode ret=new scaledTypeNode(new varTypeNode(s,new position(ctx)),new position(ctx));
+        for (var i:ctx.expression()){
+            ExprNode tmp=(ExprNode)visit(i);
+            ret.arraysize.add(tmp);
+        }
+        ret.baseType.dim=ctx.LeftBracket().size();
+        return ret;
+    }
+
+    @Override
+    public ASTNode visitLiteral(MxParser.LiteralContext ctx){
+        if (ctx.DecimalInteger()!=null) return new integerLiteralNode(Integer.parseInt(ctx.getText()),new position(ctx));
+        else if (ctx.StringLiteral()!=null) return new stringLiteralNode(ctx.getText(),new position(ctx));
+        else if (ctx.Null()!=null) return new nullLiteralNode(new position(ctx));
+        else if (ctx.True()!=null) return new boolLiteralNode(true,new position(ctx));
+        else if (ctx.False()!=null) return new boolLiteralNode(false,new position(ctx));
+    }
+    //above is verified.
 }

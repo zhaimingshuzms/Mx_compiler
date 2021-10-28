@@ -412,13 +412,25 @@ public class MxBaseListener implements MxListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterScaledType(MxParser.ScaledTypeContext ctx) { }
+	@Override public void enterBasicType(MxParser.BasicTypeContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitScaledType(MxParser.ScaledTypeContext ctx) { }
+	@Override public void exitBasicType(MxParser.BasicTypeContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterArrayType(MxParser.ArrayTypeContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitArrayType(MxParser.ArrayTypeContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

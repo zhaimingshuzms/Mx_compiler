@@ -63,10 +63,10 @@ expression
 lamdaexpression :'[&]' ('(' functionParameterDef ')')? '->' suite;
 
 returnType : Void | varType;
-varType : builtinType | Identifier | varType ('[]')+;
+varType : builtinType | Identifier | varType ('[' ']')+;
 scaledType
-    : (builtinType | Identifier)
-    | (builtinType | Identifier) ('[' expression ']')+('[]')*
+    : (builtinType | Identifier)                                                                        #basicType
+    | (builtinType | Identifier) ('[' expression ']')+('[' ']')*                                           #arrayType
     ;
 builtinType : Int | Bool | String;
 

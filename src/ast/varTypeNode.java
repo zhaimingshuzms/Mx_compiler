@@ -10,6 +10,11 @@ public class varTypeNode extends ASTNode{
         this.type=type;
         dim=0;
     }
+    public varTypeNode(String type, int dim,position pos){
+        super(pos);
+        this.type=type;
+        this.dim=dim;
+    }
 
     @Override
     public void accept(ASTVisitor visitor){

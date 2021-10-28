@@ -7,10 +7,10 @@ public class memberExprNode extends ExprNode{
     public String identifier;
     public ExprNode expression;
     public Symbol symbol;
-    public memberExprNode(String identifier, ExprNode expression, position pos){
+    public memberExprNode(ExprNode expression, String identifier,position pos){
         super(pos);
-        this.identifier=identifier;
         this.expression=expression;
+        this.identifier=identifier;
         this.symbol=null;
     }
 

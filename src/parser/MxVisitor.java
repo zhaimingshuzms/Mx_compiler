@@ -228,11 +228,19 @@ public interface MxVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitVarType(MxParser.VarTypeContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link MxParser#scaledType}.
+	 * Visit a parse tree produced by the {@code basicType}
+	 * labeled alternative in {@link MxParser#scaledType}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitScaledType(MxParser.ScaledTypeContext ctx);
+	T visitBasicType(MxParser.BasicTypeContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code arrayType}
+	 * labeled alternative in {@link MxParser#scaledType}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitArrayType(MxParser.ArrayTypeContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link MxParser#builtinType}.
 	 * @param ctx the parse tree

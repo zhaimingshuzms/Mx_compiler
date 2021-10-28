@@ -2,7 +2,7 @@ package ast;
 
 import util.position;
 public class nullLiteralNode extends literalPrimaryNode{
-    public nullLiteralNode(String val,position pos){
+    public nullLiteralNode(position pos){
         super(pos);
     }
 
