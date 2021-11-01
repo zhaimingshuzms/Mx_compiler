@@ -1,18 +1,16 @@
 package ast;
 
-import util.Symbol;
+import util.FuncSymbol;
 import util.position;
-
-import java.util.ArrayList;
 
 public class funcExprNode extends ExprNode{
     public ExprNode expression;
-    public exprListNode parameterlist;
-    public Symbol symbol;
-    public funcExprNode(ExprNode expression, exprListNode parameterlist, position pos){
+    public exprListNode parameterList;
+    public FuncSymbol symbol;
+    public funcExprNode(ExprNode expression, exprListNode parameterList, position pos){
         super(pos);
         this.expression=expression;
-        this.parameterlist=parameterlist;
+        this.parameterList=parameterList;
         this.pos=pos;
         this.symbol=null;
     }

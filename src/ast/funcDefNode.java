@@ -1,6 +1,6 @@
 package ast;
 
-import util.Symbol;
+import util.FuncSymbol;
 import util.position;
 
 import java.util.ArrayList;
@@ -12,7 +12,7 @@ public class funcDefNode extends ASTNode{
     public suiteStmtNode suite;
     public boolean isConstructer;
     public boolean returnExistence;
-    public Symbol symbol;
+    public FuncSymbol symbol;
     public funcDefNode(returnTypeNode returnType, String identifier, ArrayList<varDefNode> parameterList, suiteStmtNode suite, position pos){
         super(pos);
         this.returnType=returnType;

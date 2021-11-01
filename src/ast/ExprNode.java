@@ -4,6 +4,10 @@ import util.Type;
 import util.position;
 
 abstract public class ExprNode extends ASTNode{
+    public enum ExprType{
+        LVALUE,RVALUE,CLASS,FUNCTION
+    }
+    public ExprType exprType;
     public Type type;
     public entity val;
 

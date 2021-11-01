@@ -66,7 +66,7 @@ returnType : Void | varType;
 varType : builtinType | Identifier | varType ('[' ']')+;
 scaledType
     : (builtinType | Identifier)                                                                        #basicType
-    | (builtinType | Identifier) ('[' expression ']')+('[' ']')*                                           #arrayType
+    | (builtinType | Identifier) ('[' expression ']')+('[' ']')*                                        #arrayType
     ;
 builtinType : Int | Bool | String;
 
