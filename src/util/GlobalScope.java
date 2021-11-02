@@ -9,6 +9,12 @@ public class GlobalScope implements Scope{
     public HashMap<String,FuncSymbol> funcMap;
     public HashMap<String,ClassSymbol> classMap;
 
+    public GlobalScope(){
+        varMap=new HashMap<>();
+        funcMap=new HashMap<>();
+        classMap=new HashMap<>();
+    }
+
     @Override
     public Scope Parent(){
         return null;
@@ -54,5 +60,18 @@ public class GlobalScope implements Scope{
     public ClassSymbol findClassSymbol(String s,position pos){
         if (classMap.containsKey(s)) return findClassSymbol(s,pos);
         throw new semanticError("can't find ClassSymbol",pos);
+    }
+
+    @Override
+    public Symbol findSymbol(String s,position pos){
+        Symbol tmp=varMap.get(s);
+        if (tmp==null){
+            tmp=funcMap.get(s);
+            if (tmp==null){
+                tmp=classMap.get(s);
+                if (tmp==null) throw new semanticError("can't find symbol",pos);
+            }
+        }
+        return tmp;
     }
 }

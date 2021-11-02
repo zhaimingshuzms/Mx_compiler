@@ -1,5 +1,6 @@
 package ast;
 import MIR.entity;
+import error.semanticError;
 import util.Type;
 import util.position;
 
@@ -18,7 +19,11 @@ abstract public class ExprNode extends ASTNode{
     public boolean isAssignable(){
         return false;
     }
-
+    public void assertValue(){
+        if (exprType!=ExprType.LVALUE&&exprType!=ExprType.RVALUE){
+            throw new semanticError("expression is not a value",pos);
+        }
+    }
     @Override
     public void accept(ASTVisitor visitor){
         visitor.visit(this);

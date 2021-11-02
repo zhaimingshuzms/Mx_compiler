@@ -1,11 +1,13 @@
 package ast;
 
+import util.Symbol;
 import util.position;
 
 public class varDefNode extends StmtNode{
     public varTypeNode type;
     public String identifier;
     public ExprNode expression;
+    public Symbol symbol;
 
     public varDefNode(varTypeNode type,String identifier, ExprNode expression,position pos){
         super(pos);

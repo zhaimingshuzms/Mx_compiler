@@ -1,8 +1,8 @@
 package util;
 
-import java.util.HashMap;
 
-public class Type {
-    public boolean isInt=false,isBool=false;
-    public HashMap<String,Type> members=null;
+public interface Type {
+    String getType();
+    int getDim();
+    void check(Type t,position pos);
 }

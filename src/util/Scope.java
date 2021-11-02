@@ -7,4 +7,5 @@ public interface Scope {
     VarSymbol findVarSymbol(String s,position pos,boolean lookupon);
     FuncSymbol findFuncSymbol(String s,position pos,boolean lookupon);
     ClassSymbol findClassSymbol(String s,position pos);
+    Symbol findSymbol(String s,position pos)
 }

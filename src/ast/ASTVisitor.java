@@ -26,7 +26,7 @@ public interface ASTVisitor {
     void visit(returnTypeNode node);
     void visit(RootNode node);
     void visit(scaledTypeNode node);
-    void visit(StmtNode node);
+    //void visit(StmtNode node);
     void visit(stringLiteralNode node);
     void visit(subarrayExprNode node);
     void visit(suiteStmtNode node);

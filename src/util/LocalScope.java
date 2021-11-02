@@ -2,6 +2,7 @@ package util;
 
 import error.semanticError;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -10,7 +11,12 @@ public class LocalScope implements Scope{
     public HashMap<String,VarSymbol> varMap;
     public HashMap<String,FuncSymbol> funcMap;
     public List<VarSymbol> parameterList;
-
+    public LocalScope(Scope s){
+        varMap=new HashMap<>();
+        funcMap=new HashMap<>();
+        parameterList=new ArrayList<>();
+        parent=s;
+    }
     @Override
     public Scope Parent(){
         return parent;
@@ -64,5 +70,15 @@ public class LocalScope implements Scope{
     @Override
     public ClassSymbol findClassSymbol(String s,position pos){
         return parent.findClassSymbol(s,pos);
+    }
+
+    @Override
+    public Symbol findSymbol(String s,position pos){
+        Symbol tmp=varMap.get(s);
+        if (tmp==null){
+            tmp=funcMap.get(s);
+            if (tmp==null) return parent.findSymbol(s,pos);
+        }
+        return tmp;
     }
 }

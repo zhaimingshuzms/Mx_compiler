@@ -1,12 +1,15 @@
 package ast;
 
+import util.FuncSymbol;
 import util.position;
 
 public class newExprNode extends ExprNode{
-    public scaledTypeNode type;
-    public newExprNode(scaledTypeNode type,position pos){
+    public scaledTypeNode scaledType;
+    public FuncSymbol funcSymbol;
+    public newExprNode(scaledTypeNode scaledType,position pos){
         super(pos);
-        this.type=type;
+        this.scaledType=scaledType;
+        funcSymbol=null;
     }
 
     @Override

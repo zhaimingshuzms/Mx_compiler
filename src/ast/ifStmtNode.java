@@ -3,14 +3,14 @@ package ast;
 import util.position;
 
 public class ifStmtNode extends StmtNode{
-    ExprNode condition;
-    StmtNode thenStmt,elseStmt;
+    public ExprNode condition;
+    public StmtNode thenStmt,elseStmt;
 
     public ifStmtNode(ExprNode condition,StmtNode thenStmt,StmtNode elseStmt,position pos){
         super(pos);
         this.condition=condition;
         this.thenStmt=thenStmt;
-        this.elseStmt==elseStmt;
+        this.elseStmt=elseStmt;
     }
 
     @Override

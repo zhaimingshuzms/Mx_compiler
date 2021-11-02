@@ -15,4 +15,12 @@ public class Symbol {
         this.definition=definition;
         this.scope=null;
     }
+
+    public Symbol(position pos,String identifier,Type type,Scope scope){
+        this.pos=pos;
+        this.identifier=identifier;
+        this.type=type;
+        this.definition=null;
+        this.scope=scope;
+    }
 }
