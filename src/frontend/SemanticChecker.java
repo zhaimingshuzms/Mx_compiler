@@ -1,8 +1,6 @@
 package frontend;
 
 import ast.*;
-import com.sun.jdi.VirtualMachine;
-import com.sun.jdi.VoidType;
 import error.semanticError;
 import parser.MxParser;
 import util.*;
@@ -13,6 +11,92 @@ public class SemanticChecker implements ASTVisitor{
     public ClassSymbol currentClass;
     public StmtNode currentLoop;
     public boolean visitMember;
+    public SemanticChecker(){
+        currentScope = new GlobalScope();
+
+        ClassSymbol Int = new ClassSymbol(new position(-1, -1), "int", new IntType(), new LocalScope(currentScope));
+        ClassSymbol Bool = new ClassSymbol(new position(-1, -1), "bool", new boolType(), new LocalScope(currentScope));
+        ClassSymbol string = new ClassSymbol(new position(-1, -1), "string", new StringType(), new LocalScope(currentScope));
+        ClassSymbol Void = new ClassSymbol(new position(-1, -1), "void", new voidType(), new LocalScope(currentScope));
+
+        currentScope.registerClass(Int,new position(-1, -1));
+        currentScope.registerClass(Bool,new position(-1, -1));
+        currentScope.registerClass(string,new position(-1, -1));
+        currentScope.registerClass(Void,new position(-1, -1));
+    }
+    @Override
+    public void visit(RootNode node){
+        for (var i:node.strDefs)
+            if (i instanceof classDefNode){
+                ClassSymbol classSymbol=new ClassSymbol(i.pos,((classDefNode)i).name,new ClassType(((classDefNode)i).name),i);
+                classSymbol.scope=new LocalScope(currentScope);
+                currentScope.registerClass(classSymbol,i.pos);
+                ((classDefNode)i).symbol=classSymbol;
+                i.scope=classSymbol.scope;
+            }
+        boolean checkmain=false;
+        for (var i:node.strDefs)
+            if (i instanceof classDefNode){
+                currentScope=i.scope;
+                visitMember=true;
+                ((classDefNode) i).varDefs.forEach(x->x.accept(this));
+                visitMember=false;
+                for (var j:((classDefNode) i).funcDefs){
+                    if (j.identifier.equals(((classDefNode) i).name)){
+                        j.isConstructer=true;
+                        if (j.returnType!=null){
+                            throw new semanticError("fake constructer",j.pos);
+                        }
+                    }
+
+                    Type type=null;
+                    if (j.returnType!=null) {
+                        j.returnType.accept(this);
+                        String baseType = j.returnType.type.type;
+                        int dim = j.returnType.type.dim;
+                        if (dim == 0) {
+                            type = currentScope.findClassSymbol(baseType, j.pos).type;
+                        } else {
+                            type = new ArrayType(currentScope.findClassSymbol(baseType, j.pos).type, dim);
+                        }
+                    }
+                    FuncSymbol funcSymbol=new FuncSymbol(j.pos,j.identifier,type,j);
+                    funcSymbol.scope=new LocalScope(currentScope);
+                    funcSymbol.member=true;
+                    j.symbol=funcSymbol;
+                    j.scope=funcSymbol.scope;
+                    currentScope.registerFunc(funcSymbol,j.pos);
+                }
+                currentScope=i.scope.Parent();
+            }
+            else if (i instanceof funcDefNode){
+                ((funcDefNode) i).returnType.accept(this);
+                Type type=null;
+                if (((funcDefNode) i).returnType!=null) {
+                    ((funcDefNode) i).returnType.accept(this);
+                    String baseType =((funcDefNode) i).returnType.type.type;
+                    int dim = ((funcDefNode) i).returnType.type.dim;
+                    if (dim == 0) {
+                        type = currentScope.findClassSymbol(baseType, i.pos).type;
+                    } else {
+                        type = new ArrayType(currentScope.findClassSymbol(baseType, i.pos).type, dim);
+                    }
+                }
+                FuncSymbol funcSymbol=new FuncSymbol(i.pos,((funcDefNode) i).identifier,type,i);
+                funcSymbol.scope=new LocalScope(currentScope);
+                ((funcDefNode) i).symbol=funcSymbol;
+                i.scope=funcSymbol.scope;
+                currentScope.registerFunc(funcSymbol,i.pos);
+                if (((funcDefNode) i).identifier.equals("main")) {
+                    checkmain = true;
+                }
+                currentScope=i.scope;
+                i.accept(this);
+                currentScope=i.scope.Parent();
+            }
+            else throw new semanticError("Rootnode error",node.pos);
+        if (!checkmain) throw new semanticError("no main error",node.pos);
+    }
 
     @Override
     public void visit(assignExprNode node){
@@ -112,6 +196,11 @@ public class SemanticChecker implements ASTVisitor{
     }
 
     @Override
+    public void visit(varTypeNode node){
+        throw new semanticError("varTypeNode",node.pos);
+    }
+
+    @Override
     public void visit(suiteStmtNode node){
         Scope upScope=currentScope;
         LocalScope localScope=new LocalScope(currentScope);
@@ -126,8 +215,12 @@ public class SemanticChecker implements ASTVisitor{
 
     @Override
     public void visit(funcDefNode node){
-        FuncSymbol funcSymbol=(FuncSymbol)node.symbol;
+        FuncSymbol funcSymbol=node.symbol;
         currentFunc=funcSymbol;
+        for (var i:node.parameterList){
+            i.accept(this);
+            currentScope=funcSymbol.scope;
+        }
         currentScope=funcSymbol.scope;
         node.suite.accept(this);
         currentScope=funcSymbol.scope;
@@ -187,7 +280,94 @@ public class SemanticChecker implements ASTVisitor{
         lhs.assertValue();
         rhs.assertValue();
         binaryExprNode.binaryOpType op=node.opCode;
-        //???
+        if (op== binaryExprNode.binaryOpType.sub||
+                op== binaryExprNode.binaryOpType.mul||
+                op== binaryExprNode.binaryOpType.div||
+                op== binaryExprNode.binaryOpType.mod||
+                op== binaryExprNode.binaryOpType.shl||
+                op== binaryExprNode.binaryOpType.shr||
+                op== binaryExprNode.binaryOpType.ariAnd||
+                op== binaryExprNode.binaryOpType.ariOr||
+                op== binaryExprNode.binaryOpType.ariXor
+        ){
+            IntType intType=new IntType();
+            intType.check(lhs.type,lhs.pos);
+            intType.check(rhs.type,rhs.pos);
+            node.type=intType;
+            node.exprType= ExprNode.ExprType.RVALUE;
+        }
+        else if (op==binaryExprNode.binaryOpType.logicAnd||op==binaryExprNode.binaryOpType.logicOr){
+            boolType bt=new boolType();
+            bt.check(lhs.type,lhs.pos);
+            bt.check(rhs.type,rhs.pos);
+            node.type=bt;
+            node.exprType=ExprNode.ExprType.RVALUE;
+        }
+        else if (op== binaryExprNode.binaryOpType.add){
+            if (lhs.type instanceof IntType && rhs.type instanceof IntType){
+                node.type=new IntType();
+                node.exprType=ExprNode.ExprType.RVALUE;
+            }
+            else if (lhs.type instanceof StringType && rhs.type instanceof StringType){
+                node.type=new StringType();
+                node.exprType=ExprNode.ExprType.RVALUE;
+            }
+            else throw new semanticError("BinaryExprNode error",node.pos);
+        }
+        else if (op== binaryExprNode.binaryOpType.less||
+                op== binaryExprNode.binaryOpType.lessequal||
+                op== binaryExprNode.binaryOpType.greater||
+                op== binaryExprNode.binaryOpType.greaterequal){
+            if (lhs.type instanceof IntType && rhs.type instanceof IntType||lhs.type instanceof StringType && rhs.type instanceof StringType) {
+                node.type=new boolType();
+                node.exprType=ExprNode.ExprType.RVALUE;
+            }
+            else throw new semanticError("BinaryExprNode error",node.pos);
+        }
+        else if (op==binaryExprNode.binaryOpType.equal ||op==binaryExprNode.binaryOpType.notequal){
+            lhs.type.checkEqual(rhs.type,node.pos);
+            node.type=new boolType();
+            node.exprType= ExprNode.ExprType.RVALUE;
+        }
+        else throw new semanticError("BinaryExprNode error",node.pos);
+    }
+
+    @Override
+    public void visit(prefixExprNode node){
+        node.scope=currentScope;
+        node.expr.accept(this);
+        node.expr.assertValue();
+        var op=node.op;
+        if (op==prefixExprNode.prefixOpType.Plus||op== prefixExprNode.prefixOpType.Minus||op== prefixExprNode.prefixOpType.Tilde){
+            IntType intType=new IntType();
+            intType.check(node.expr.type,node.expr.pos);
+            node.type=intType;
+            node.exprType= ExprNode.ExprType.RVALUE;
+        }
+        else if (op== prefixExprNode.prefixOpType.SelfPlus||op== prefixExprNode.prefixOpType.SelfMinus){
+            if (node.expr.exprType!= ExprNode.ExprType.LVALUE){
+                throw new semanticError("PrefExprNode error",node.expr.pos);
+            }
+            IntType intType=new IntType();
+            intType.check(node.expr.type,node.pos);
+            node.type=intType;
+            node.exprType= ExprNode.ExprType.LVALUE;
+        }
+        else if (op== prefixExprNode.prefixOpType.Not){
+            boolType bt=new boolType();
+            bt.check(node.expr.type,node.expr.pos);
+            node.type=bt;
+            node.exprType=ExprNode.ExprType.RVALUE;
+        }
+        else throw new semanticError("PrefixExprNode Op Error",node.pos);
+    }
+    @Override
+    public void visit(exprPrimaryNode node){
+        node.scope=currentScope;
+        node.expression.accept(this);
+        node.expression.assertValue();
+        node.type=node.expression.type;
+        node.exprType=node.expression.exprType;
     }
 
     @Override
@@ -299,6 +479,21 @@ public class SemanticChecker implements ASTVisitor{
             node.loopsuite.accept(this);
         }
         currentLoop=upLoop;
+    }
+
+
+    @Override
+    public void visit(suffixExprNode node){
+        node.scope=currentScope;
+        node.expr.accept(this);
+        node.expr.assertValue();
+        if (node.expr.exprType!= ExprNode.ExprType.LVALUE){
+            throw new semanticError("suffixExprNode ERROR",node.pos);
+        }
+        IntType intType=new IntType();
+        intType.check(node.expr.type,node.expr.pos);
+        node.type=intType;
+        node.exprType=(ExprNode.ExprType.RVALUE);
     }
 
     @Override

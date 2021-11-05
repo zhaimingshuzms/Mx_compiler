@@ -18,4 +18,10 @@ public class boolType implements Type{
         if (t.getType().equals(getType())) return;
         throw new semanticError("bool check error",pos);
     }
+
+    @Override
+    public void checkEqual(Type t,position pos){
+        if (t.getType().equals(getType())) return;
+        throw new semanticError("bool check error",pos);
+    }
 }

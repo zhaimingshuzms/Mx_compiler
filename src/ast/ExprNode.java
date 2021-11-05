@@ -24,8 +24,4 @@ abstract public class ExprNode extends ASTNode{
             throw new semanticError("expression is not a value",pos);
         }
     }
-    @Override
-    public void accept(ASTVisitor visitor){
-        visitor.visit(this);
-    }
 }

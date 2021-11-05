@@ -18,4 +18,10 @@ public class IntType implements Type{
         if (t.getType().equals("int")) return;
         throw new semanticError("intType check error",pos);
     }
+
+    @Override
+    public void checkEqual(Type t,position pos){
+        if (t.getType().equals("int")) return;
+        throw new semanticError("intType check error",pos);
+    }
 }

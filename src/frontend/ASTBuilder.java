@@ -1,6 +1,8 @@
 package frontend;
 
 import ast.*;
+import error.builderError;
+import error.semanticError;
 import org.antlr.v4.runtime.ParserRuleContext;
 import parser.MxBaseVisitor;
 import parser.MxParser;
@@ -183,6 +185,7 @@ public class ASTBuilder extends MxBaseVisitor <ASTNode>{
         else if (ctx.literal()!=null){
             return (literalPrimaryNode)visit(ctx.literal());
         }
+        throw new builderError("primary error",new position(ctx));
     }
 
     @Override
@@ -211,6 +214,7 @@ public class ASTBuilder extends MxBaseVisitor <ASTNode>{
     public ASTNode visitSuffixExpr(MxParser.SuffixExprContext ctx){
         if (ctx.SelfPlus()!=null) return new suffixExprNode((ExprNode)visit(ctx.expression()),suffixExprNode.suffixOpType.SelfPlus,new position(ctx));
         else if (ctx.SelfMinus()!=null) return new suffixExprNode((ExprNode)visit(ctx.expression()),suffixExprNode.suffixOpType.SelfMinus,new position(ctx));
+        throw new builderError("suffixExpr error",new position(ctx));
     }
 
     @Override
@@ -261,6 +265,7 @@ public class ASTBuilder extends MxBaseVisitor <ASTNode>{
         else if (ctx.Tilde()!=null){
             return new prefixExprNode(prefixExprNode.prefixOpType.Tilde,(ExprNode)visit(ctx.expression()),new position(ctx));
         }
+        throw new builderError("prefixExpr error",new position(ctx));
     }
     @Override
     public ASTNode visitAssignExpr(MxParser.AssignExprContext ctx){
@@ -286,6 +291,7 @@ public class ASTBuilder extends MxBaseVisitor <ASTNode>{
         }
         else if (ctx.builtinType()!=null)
             return new varTypeNode(ctx.builtinType().getText(),new position(ctx));
+        throw new semanticError("varType error",new position(ctx));
     }
 
     @Override
@@ -295,6 +301,7 @@ public class ASTBuilder extends MxBaseVisitor <ASTNode>{
         }
         else if (ctx.Identifier()!=null)
             return new scaledTypeNode(new varTypeNode(ctx.Identifier().getText(),new position(ctx)),new position(ctx));
+        throw new builderError("basicTypeerror",new position(ctx));
     }
 
     @Override
@@ -318,6 +325,7 @@ public class ASTBuilder extends MxBaseVisitor <ASTNode>{
         else if (ctx.Null()!=null) return new nullLiteralNode(new position(ctx));
         else if (ctx.True()!=null) return new boolLiteralNode(true,new position(ctx));
         else if (ctx.False()!=null) return new boolLiteralNode(false,new position(ctx));
+        throw new semanticError("literalNode error",new position(ctx));
     }
     //above is verified.
 }

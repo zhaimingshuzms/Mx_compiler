@@ -15,4 +15,11 @@ public class nullType implements Type{
     public void check(Type t,position pos){
         if (!t.getType().equals("null")) throw new semanticError("nullType check error",pos);
     }
+
+
+    @Override
+    public void checkEqual(Type t,position pos){
+        if (t.getType().equals("int")||t.getType().equals("void")||t.getType().equals("bool")||t.getType().equals("classDef"))
+        throw new semanticError("nullType check error",pos);
+    }
 }

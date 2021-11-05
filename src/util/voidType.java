@@ -18,4 +18,10 @@ public class voidType implements Type{
         if (t.getType().equals("void")) return;
         throw new semanticError("voidType check error",pos);
     }
+
+    @Override
+    public void checkEqual(Type t,position pos){
+        if (t.getType().equals("void")) return;
+        throw new semanticError("voidType check error",pos);
+    }
 }

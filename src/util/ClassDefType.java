@@ -5,7 +5,7 @@ import error.semanticError;
 public class ClassDefType implements Type{
     @Override
     public String getType(){
-        return "class";
+        return "classDef";
     }
 
     @Override
@@ -15,6 +15,11 @@ public class ClassDefType implements Type{
 
     @Override
     public void check(Type t,position pos){
+        throw new semanticError("classDef check error",pos);
+    }
+
+    @Override
+    public void checkEqual(Type t,position pos){
         throw new semanticError("classDef check error",pos);
     }
 }

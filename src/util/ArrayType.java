@@ -29,4 +29,10 @@ public class ArrayType implements Type{
         if (t.getType().equals(getType())) return;
         throw new semanticError("arrayType check error",pos);
     }
+
+    @Override
+    public void checkEqual(Type t,position pos){
+        if (t.getType().equals(getType())||t.getType().equals("null")) return;
+        throw new semanticError("arrayType check error",pos);
+    }
 }
