@@ -245,6 +245,14 @@ public class SemanticChecker implements ASTVisitor{
     }
 
     @Override
+    public void visit(exprListNode node){
+        node.scope=currentScope;
+        for (var i:node.exprList){
+            i.accept(this);
+            i.assertValue();
+        }
+    }
+    @Override
     public void visit(funcExprNode node){
         node.scope=currentScope;
         node.expression.accept(this);

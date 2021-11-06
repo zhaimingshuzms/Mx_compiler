@@ -29,6 +29,6 @@ public class varDefNode extends StmtNode{
     }
     @Override
     public void accept(ASTVisitor visitor){
-        vistor.visit(this);
+        visitor.visit(this);
     }
 }

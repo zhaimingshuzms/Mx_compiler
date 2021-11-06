@@ -13,4 +13,9 @@ public class identifierPrimaryNode extends primaryExprNode{
         this.identifier=identifier;
         symbol=null;
     }
+
+    @Override
+    public void accept(ASTVisitor visitor){
+        visitor.visit(this);
+    }
 }

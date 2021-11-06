@@ -9,6 +9,7 @@ public interface ASTVisitor {
     void visit(classDefNode node);
     void visit(continueStmtNode node);
     //void visit(ExprNode node);
+    void visit(exprListNode node);
     void visit(exprPrimaryNode node);
     void visit(exprStmtNode node);
     void visit(forStmtNode node);

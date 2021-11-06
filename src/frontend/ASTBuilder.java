@@ -3,7 +3,7 @@ package frontend;
 import ast.*;
 import error.builderError;
 import error.semanticError;
-import org.antlr.v4.runtime.ParserRuleContext;
+import org.antlr.v4.runtime.*;
 import parser.MxBaseVisitor;
 import parser.MxParser;
 import util.position;
