@@ -12,7 +12,7 @@ suite : '{' statement * '}';
 
 statement
     : suite                                                                                #block
-    | varDef                                                                               #varDefStmt
+    | varDef ';'                                                                           #varDefStmt
     | If '(' expression ')' trueStmt=statement
         (Else falseStmt=statement)?                                                        #ifStmt
     | For '(' (prework=expression |prevar=varDef)? ';' (condition=expression)? ';' (loopexpression=expression)? ')' statement     #forStmt
@@ -20,7 +20,7 @@ statement
     | Break ';'                                                                            #breakStmt
     | Return expression? ';'                                                               #returnStmt
     | While expression ? statement                                                         #whileStmt
-    | expression?';'                                                                       #expressionStmt
+    | expression ';'                                                                       #expressionStmt
     ;
 
 varDef : varType varDeclaration (',' varDeclaration)*;
@@ -28,7 +28,7 @@ varDef : varType varDeclaration (',' varDeclaration)*;
 varDeclaration : Identifier ('=' expression)?;
 
 classDef
-    : Class Identifier '{' (classMemberDef | classFunctionDef) * '}';
+    : Class Identifier '{' (classMemberDef | classFunctionDef) * '}' ';';
 
 classMemberDef : varDef ';';
 
@@ -65,8 +65,8 @@ lamdaexpression :'[&]' ('(' functionParameterDef ')')? '->' suite;
 returnType : Void | varType;
 varType : builtinType | Identifier | varType ('[' ']')+;
 scaledType
-    : (builtinType | Identifier)                                                                        #basicType
-    | (builtinType | Identifier) ('[' expression ']')+('[' ']')*                                        #arrayType
+    : (builtinType | Identifier) ('[' expression ']')+('[' ']')*                                        #arrayType
+    | (builtinType | Identifier)                                                                        #basicType
     ;
 builtinType : Int | Bool | String;
 

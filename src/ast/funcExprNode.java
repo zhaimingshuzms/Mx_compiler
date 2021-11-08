@@ -15,6 +15,14 @@ public class funcExprNode extends ExprNode{
         this.symbol=null;
     }
 
+    public funcExprNode(ExprNode expression,position pos){
+        super(pos);
+        this.expression=expression;
+        this.parameterList=new exprListNode(pos);
+        this.pos=pos;
+        this.symbol=null;
+    }
+
     @Override
     public void accept(ASTVisitor visitor){
         visitor.visit(this);

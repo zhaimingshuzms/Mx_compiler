@@ -3,7 +3,7 @@ package ast;
 import util.Symbol;
 import util.position;
 
-public class varDefNode extends StmtNode{
+public class varDefNode extends ASTNode{
     public varTypeNode type;
     public String identifier;
     public ExprNode expression;

@@ -30,6 +30,7 @@ public class Main {
             ParseTree parseTreeRoot=parser.program();
             ASTBuilder builder=new ASTBuilder();
             RootNode ret=(RootNode) builder.visit(parseTreeRoot);
+            System.out.println("build end");
             ASTVisitor visitor=new SemanticChecker();
             visitor.visit(ret);
         }catch(error er){

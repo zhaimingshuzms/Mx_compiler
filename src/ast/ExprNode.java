@@ -17,7 +17,7 @@ abstract public class ExprNode extends ASTNode{
     }
 
     public boolean isAssignable(){
-        return false;
+        return exprType==ExprType.LVALUE;
     }
     public void assertValue(){
         if (exprType!=ExprType.LVALUE&&exprType!=ExprType.RVALUE){

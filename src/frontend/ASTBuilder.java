@@ -145,7 +145,7 @@ public class ASTBuilder extends MxBaseVisitor <ASTNode>{
 
     @Override
     public ASTNode visitVarDeclaration(MxParser.VarDeclarationContext ctx){
-        if (!ctx.expression().isEmpty()){
+        if (ctx.expression()!=null){
             ExprNode expr=(ExprNode)visit(ctx.expression());
             return new varDefNode(ctx.Identifier().getText(),expr,new position(ctx));
         }
@@ -154,8 +154,8 @@ public class ASTBuilder extends MxBaseVisitor <ASTNode>{
     @Override
     public ASTNode visitClassDef(MxParser.ClassDefContext ctx){
         classDefNode classDef=new classDefNode(new position(ctx),ctx.Identifier().toString());
-        ctx.classMemberDef().forEach(vd->classDef.varDefs.add((varDefNode)visit(vd)));
-        ctx.classFunctionDef().forEach(fd ->classDef.funcDefs.add((funcDefNode)visit(fd)));
+        ctx.classMemberDef().forEach(vd->classDef.varDefs.add((varDefListNode)visit(vd.varDef())));
+        ctx.classFunctionDef().forEach(fd->classDef.funcDefs.add((funcDefNode)visit(fd)));
         return classDef;
     }
 
@@ -200,7 +200,8 @@ public class ASTBuilder extends MxBaseVisitor <ASTNode>{
 
     @Override
     public ASTNode visitFuncExpr(MxParser.FuncExprContext ctx){
-        return new funcExprNode((ExprNode)visit(ctx.expression()),(exprListNode) visit(ctx.parameterList()),new position(ctx));
+        if (ctx.parameterList()!=null) return new funcExprNode((ExprNode)visit(ctx.expression()),(exprListNode) visit(ctx.parameterList()),new position(ctx));
+        return new funcExprNode((ExprNode)visit(ctx.expression()),new position(ctx));
     }
 
     @Override
@@ -282,15 +283,16 @@ public class ASTBuilder extends MxBaseVisitor <ASTNode>{
 
     @Override
     public ASTNode visitVarType(MxParser.VarTypeContext ctx){
-        if (ctx.varType()!=null){
-            varTypeNode tmp=(varTypeNode)visit(ctx);
-            return new varTypeNode(tmp.type,ctx.LeftBracket().size(),tmp.pos);
+        if (ctx.LeftBracket().size()>0){
+            varTypeNode tmp = (varTypeNode) visit(ctx.varType());
+            return new varTypeNode(tmp.type, ctx.LeftBracket().size(), tmp.pos);
         }
         else if (ctx.Identifier()!=null){
             return new varTypeNode(ctx.Identifier().getText(),new position(ctx));
         }
-        else if (ctx.builtinType()!=null)
-            return new varTypeNode(ctx.builtinType().getText(),new position(ctx));
+        else if (ctx.builtinType()!=null) {
+            return new varTypeNode(ctx.builtinType().getText(), new position(ctx));
+        }
         throw new semanticError("varType error",new position(ctx));
     }
 

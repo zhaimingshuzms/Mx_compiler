@@ -5,6 +5,8 @@ import error.semanticError;
 import parser.MxParser;
 import util.*;
 
+import java.util.ArrayList;
+
 public class SemanticChecker implements ASTVisitor{
     public Scope currentScope;
     public FuncSymbol currentFunc;
@@ -19,38 +21,88 @@ public class SemanticChecker implements ASTVisitor{
         ClassSymbol string = new ClassSymbol(new position(-1, -1), "string", new StringType(), new LocalScope(currentScope));
         ClassSymbol Void = new ClassSymbol(new position(-1, -1), "void", new voidType(), new LocalScope(currentScope));
 
+        FuncSymbol Print=new FuncSymbol(new position(-1,-1),"print",new voidType(),new LocalScope(currentScope));
+        VarSymbol strPrint=new VarSymbol(new position(-1,-1),"str",new StringType(),Print.scope);
+        ((LocalScope)Print.scope).registerPara(strPrint,new position(-1,-1));
+        currentScope.registerFunc(Print,new position(-1,-1));
+
+        FuncSymbol Println = new FuncSymbol(new position(-1, -1), "println", new voidType(), new LocalScope(currentScope));
+        VarSymbol strPrintln = new VarSymbol(new position(-1, -1), "str", new StringType(), Println.scope);
+        ((LocalScope) Println.scope).registerPara(strPrintln, new position(-1, -1));
+        currentScope.registerFunc(Println, new position(-1, -1));
+
+        FuncSymbol PrintInt=new FuncSymbol(new position(-1,-1),"printInt",new voidType(),new LocalScope(currentScope));
+        VarSymbol strPrintInt=new VarSymbol(new position(-1,-1),"str",new IntType(),PrintInt.scope);
+        ((LocalScope)PrintInt.scope).registerPara(strPrintInt,new position(-1,-1));
+        currentScope.registerFunc(PrintInt,new position(-1,-1));
+
+        FuncSymbol PrintlnInt=new FuncSymbol(new position(-1,-1),"printlnInt",new voidType(),new LocalScope(currentScope));
+        VarSymbol strPrintlnInt=new VarSymbol(new position(-1,-1),"str",new IntType(),PrintlnInt.scope);
+        ((LocalScope)PrintlnInt.scope).registerPara(strPrintlnInt,new position(-1,-1));
+        currentScope.registerFunc(PrintlnInt,new position(-1,-1));
+
+        FuncSymbol GetString=new FuncSymbol(new position(-1,-1),"getString",new StringType(),new LocalScope(currentScope));
+        currentScope.registerFunc(GetString,new position(-1,-1));
+
+        FuncSymbol GetInt=new FuncSymbol(new position(-1,-1),"getInt",new StringType(),new LocalScope(currentScope));
+        currentScope.registerFunc(GetInt,new position(-1,-1));
+
+        FuncSymbol ToString=new FuncSymbol(new position(-1,-1),"toString",new IntType(),new LocalScope(currentScope));
+        VarSymbol IntToString=new VarSymbol(new position(-1,-1),"int",new IntType(),ToString.scope);
+        ((LocalScope)ToString.scope).registerPara(IntToString,new position(-1,-1));
+        currentScope.registerFunc(ToString,new position(-1,-1));
+
+        FuncSymbol Length=new FuncSymbol(new position(-1,-1),"length",new IntType(),new LocalScope(string.scope));
+        Length.member=true;
+        string.scope.registerFunc(Length,new position(-1,-1));
+
+        FuncSymbol SubString=new FuncSymbol(new position(-1,-1),"substring",new StringType(),new LocalScope(string.scope));
+        SubString.member=true;
+        VarSymbol Left=new VarSymbol(new position(-1,-1),"left",new IntType(),SubString.scope);
+        VarSymbol Right=new VarSymbol(new position(-1,-1),"right",new IntType(),SubString.scope);
+        ((LocalScope)SubString.scope).registerPara(Left,new position(-1,-1));
+        ((LocalScope)SubString.scope).registerPara(Right,new position(-1,-1));
+        string.scope.registerFunc(SubString,new position(-1,-1));
+
+        FuncSymbol ParseInt=new FuncSymbol(new position(-1,-1),"parseInt",new IntType(),new LocalScope(string.scope));
+        ParseInt.member=true;
+        Length.member=true;
+        string.scope.registerFunc(ParseInt,new position(-1,-1));
+
         currentScope.registerClass(Int,new position(-1, -1));
         currentScope.registerClass(Bool,new position(-1, -1));
         currentScope.registerClass(string,new position(-1, -1));
         currentScope.registerClass(Void,new position(-1, -1));
     }
     @Override
-    public void visit(RootNode node){
-        for (var i:node.strDefs)
-            if (i instanceof classDefNode){
-                ClassSymbol classSymbol=new ClassSymbol(i.pos,((classDefNode)i).name,new ClassType(((classDefNode)i).name),i);
-                classSymbol.scope=new LocalScope(currentScope);
-                currentScope.registerClass(classSymbol,i.pos);
-                ((classDefNode)i).symbol=classSymbol;
-                i.scope=classSymbol.scope;
+    public void visit(RootNode node) {
+        System.out.println("visit rootnode");
+        for (var i : node.strDefs)
+            if (i instanceof classDefNode) {
+                ClassSymbol classSymbol = new ClassSymbol(i.pos, ((classDefNode) i).name, new ClassType(((classDefNode) i).name), i);
+                classSymbol.scope = new LocalScope(currentScope);
+                currentScope.registerClass(classSymbol, i.pos);
+                ((classDefNode) i).symbol = classSymbol;
+                i.scope = classSymbol.scope;
             }
-        boolean checkmain=false;
-        for (var i:node.strDefs)
-            if (i instanceof classDefNode){
-                currentScope=i.scope;
-                visitMember=true;
-                ((classDefNode) i).varDefs.forEach(x->x.accept(this));
-                visitMember=false;
-                for (var j:((classDefNode) i).funcDefs){
-                    if (j.identifier.equals(((classDefNode) i).name)){
-                        j.isConstructer=true;
-                        if (j.returnType!=null){
-                            throw new semanticError("fake constructer",j.pos);
+
+        boolean checkMain = false;
+        for (var i : node.strDefs)
+            if (i instanceof classDefNode) {
+                currentScope = i.scope;
+                visitMember = true;
+                ((classDefNode) i).varDefs.forEach(x -> x.accept(this));
+                visitMember = false;
+                for (var j : ((classDefNode) i).funcDefs) {
+                    if (j.identifier.equals(((classDefNode) i).name)) {
+                        j.isConstructer = true;
+                        if (j.returnType != null) {
+                            throw new semanticError("fake constructer", j.pos);
                         }
                     }
 
-                    Type type=null;
-                    if (j.returnType!=null) {
+                    Type type = null;
+                    if (j.returnType.type!= null) {
                         j.returnType.accept(this);
                         String baseType = j.returnType.type.type;
                         int dim = j.returnType.type.dim;
@@ -60,21 +112,20 @@ public class SemanticChecker implements ASTVisitor{
                             type = new ArrayType(currentScope.findClassSymbol(baseType, j.pos).type, dim);
                         }
                     }
-                    FuncSymbol funcSymbol=new FuncSymbol(j.pos,j.identifier,type,j);
-                    funcSymbol.scope=new LocalScope(currentScope);
-                    funcSymbol.member=true;
-                    j.symbol=funcSymbol;
-                    j.scope=funcSymbol.scope;
-                    currentScope.registerFunc(funcSymbol,j.pos);
+                    FuncSymbol funcSymbol = new FuncSymbol(j.pos, j.identifier, type, j);
+                    funcSymbol.scope = new LocalScope(currentScope);
+                    funcSymbol.member = true;
+                    j.symbol = funcSymbol;
+                    j.scope = funcSymbol.scope;
+                    currentScope.registerFunc(funcSymbol, j.pos);
                 }
-                currentScope=i.scope.Parent();
-            }
-            else if (i instanceof funcDefNode){
+                currentScope = i.scope.Parent();
+            } else if (i instanceof funcDefNode) {
                 ((funcDefNode) i).returnType.accept(this);
-                Type type=null;
-                if (((funcDefNode) i).returnType!=null) {
+                Type type = new voidType();
+                if (((funcDefNode) i).returnType.type != null) {//not void
                     ((funcDefNode) i).returnType.accept(this);
-                    String baseType =((funcDefNode) i).returnType.type.type;
+                    String baseType = ((funcDefNode) i).returnType.type.type;
                     int dim = ((funcDefNode) i).returnType.type.dim;
                     if (dim == 0) {
                         type = currentScope.findClassSymbol(baseType, i.pos).type;
@@ -82,22 +133,20 @@ public class SemanticChecker implements ASTVisitor{
                         type = new ArrayType(currentScope.findClassSymbol(baseType, i.pos).type, dim);
                     }
                 }
-                FuncSymbol funcSymbol=new FuncSymbol(i.pos,((funcDefNode) i).identifier,type,i);
-                funcSymbol.scope=new LocalScope(currentScope);
-                ((funcDefNode) i).symbol=funcSymbol;
-                i.scope=funcSymbol.scope;
-                currentScope.registerFunc(funcSymbol,i.pos);
+                FuncSymbol funcSymbol = new FuncSymbol(i.pos, ((funcDefNode) i).identifier, type, i);
+                funcSymbol.scope = new LocalScope(currentScope);
+                ((funcDefNode) i).symbol = funcSymbol;
+                i.scope = funcSymbol.scope;
+                currentScope.registerFunc(funcSymbol, i.pos);
                 if (((funcDefNode) i).identifier.equals("main")) {
-                    checkmain = true;
+                    checkMain = true;
                 }
-                currentScope=i.scope;
+                currentScope = i.scope;
                 i.accept(this);
-                currentScope=i.scope.Parent();
-            }
-            else throw new semanticError("Rootnode error",node.pos);
-        if (!checkmain) throw new semanticError("no main error",node.pos);
+                currentScope = i.scope.Parent();
+            } else throw new semanticError("Rootnode error", node.pos);
+        if (!checkMain) throw new semanticError("no main error", node.pos);
     }
-
     @Override
     public void visit(assignExprNode node){
         node.scope=currentScope;
@@ -107,7 +156,10 @@ public class SemanticChecker implements ASTVisitor{
         }
         node.lhs.assertValue();
         node.rhs.accept(this);
+        node.lhs.type.check(node.rhs.type,node.pos);
         node.rhs.assertValue();
+        node.type=node.lhs.type;
+        node.exprType= ExprNode.ExprType.LVALUE;
     }
 
     @Override
@@ -172,6 +224,7 @@ public class SemanticChecker implements ASTVisitor{
 
         String baseType=node.scaledType.baseType.type;
         int dim=node.scaledType.baseType.dim;
+
         ClassSymbol classSymbol=currentScope.findClassSymbol(baseType,node.pos);
         if (dim==0){
             node.type=classSymbol.type;
@@ -179,7 +232,10 @@ public class SemanticChecker implements ASTVisitor{
                 node.funcSymbol=classSymbol.constructer;
             }
         }
-        else node.type=new ArrayType(node.type,dim);
+        else{
+            node.type=new ArrayType(classSymbol.type,dim);
+        }
+
         node.exprType= ExprNode.ExprType.RVALUE;
     }
 
@@ -509,6 +565,8 @@ public class SemanticChecker implements ASTVisitor{
         node.scope=currentScope;
         node.identifier.accept(this);
         node.index.accept(this);
+        System.out.println("BB "+node.identifier.type.getType());
+        System.out.println(node.identifier.type.getDim());
         if (!(node.identifier.type instanceof ArrayType)){
             throw new semanticError("SubArrayExprNode identifier ERROR",node.pos);
         }

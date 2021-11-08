@@ -58,7 +58,7 @@ public class GlobalScope implements Scope{
 
     @Override
     public ClassSymbol findClassSymbol(String s,position pos){
-        if (classMap.containsKey(s)) return findClassSymbol(s,pos);
+        if (classMap.containsKey(s)) return classMap.get(s);
         throw new semanticError("can't find ClassSymbol",pos);
     }
 

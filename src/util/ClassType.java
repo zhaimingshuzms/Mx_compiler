@@ -20,13 +20,13 @@ public class ClassType implements Type{
 
     @Override
     public void check(Type t,position pos){
-        if (t.getType().equals("class")||t.getType().equals("null")) return;
+        if (t.getType().equals(identifier)||t.getType().equals("null")) return;
         throw new semanticError("classType check error",pos);
     }
 
     @Override
     public void checkEqual(Type t,position pos){
-        if (t.getType().equals("class")||t.getType().equals("null")) return;
+        if (t.getType().equals(identifier)||t.getType().equals("null")) return;
         throw new semanticError("classType check error",pos);
     }
 }
