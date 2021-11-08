@@ -47,7 +47,7 @@ public class SemanticChecker implements ASTVisitor{
         FuncSymbol GetInt=new FuncSymbol(new position(-1,-1),"getInt",new StringType(),new LocalScope(currentScope));
         currentScope.registerFunc(GetInt,new position(-1,-1));
 
-        FuncSymbol ToString=new FuncSymbol(new position(-1,-1),"toString",new IntType(),new LocalScope(currentScope));
+        FuncSymbol ToString=new FuncSymbol(new position(-1,-1),"toString",new StringType(),new LocalScope(currentScope));
         VarSymbol IntToString=new VarSymbol(new position(-1,-1),"int",new IntType(),ToString.scope);
         ((LocalScope)ToString.scope).registerPara(IntToString,new position(-1,-1));
         currentScope.registerFunc(ToString,new position(-1,-1));
@@ -66,8 +66,14 @@ public class SemanticChecker implements ASTVisitor{
 
         FuncSymbol ParseInt=new FuncSymbol(new position(-1,-1),"parseInt",new IntType(),new LocalScope(string.scope));
         ParseInt.member=true;
-        Length.member=true;
         string.scope.registerFunc(ParseInt,new position(-1,-1));
+
+        FuncSymbol Ord=new FuncSymbol(new position(-1,-1),"ord",new IntType(),new LocalScope(string.scope));
+        Ord.member=true;
+        string.scope.registerFunc(Ord,new position(-1,-1));
+
+        FuncSymbol ArraySize=new FuncSymbol(new position(-1,-1),"*size*",new IntType(),new LocalScope(currentScope));
+        string.scope.registerFunc(ArraySize,new position(-1,-1));
 
         currentScope.registerClass(Int,new position(-1, -1));
         currentScope.registerClass(Bool,new position(-1, -1));
@@ -118,6 +124,9 @@ public class SemanticChecker implements ASTVisitor{
                     j.symbol = funcSymbol;
                     j.scope = funcSymbol.scope;
                     currentScope.registerFunc(funcSymbol, j.pos);
+                    currentScope=j.scope;
+                    j.accept(this);
+                    currentScope=j.scope.Parent();
                 }
                 currentScope = i.scope.Parent();
             } else if (i instanceof funcDefNode) {
@@ -139,12 +148,22 @@ public class SemanticChecker implements ASTVisitor{
                 i.scope = funcSymbol.scope;
                 currentScope.registerFunc(funcSymbol, i.pos);
                 if (((funcDefNode) i).identifier.equals("main")) {
+                    if (((funcDefNode) i).returnType.type==null){
+                        throw new semanticError("main with not void returnType",node.pos);
+                    }
+                    else if (!((funcDefNode) i).parameterList.isEmpty()){
+                        throw new semanticError("main with parameter",node.pos);
+                    }
                     checkMain = true;
                 }
                 currentScope = i.scope;
                 i.accept(this);
                 currentScope = i.scope.Parent();
-            } else throw new semanticError("Rootnode error", node.pos);
+            }
+            else if (i instanceof varDefListNode){
+                i.accept(this);
+            }
+            else throw new semanticError("Rootnode error", node.pos);
         if (!checkMain) throw new semanticError("no main error", node.pos);
     }
     @Override
@@ -198,20 +217,30 @@ public class SemanticChecker implements ASTVisitor{
         node.scope=currentScope;
         node.expression.accept(this);
         node.expression.assertValue();
-        if (node.type instanceof ClassType||node.type instanceof StringType){
+        if (node.expression.type instanceof ClassType||node.expression.type instanceof StringType){
             ClassSymbol classSymbol=currentScope.findClassSymbol(node.expression.type.getType(),node.pos);
-            Symbol symbol=((LocalScope)currentClass.scope).findSymbol(node.identifier,node.pos);
+            Symbol symbol=classSymbol.scope.findSymbol(node.identifier,node.pos);
             if (symbol instanceof FuncSymbol){
                 node.exprType= ExprNode.ExprType.FUNCTION;
                 node.type=symbol.type;
                 node.symbol=symbol;
             }
-            else if (symbol instanceof VarSymbol){
+            else if (node.symbol.type instanceof VarSymbol){
                 node.exprType=ExprNode.ExprType.LVALUE;
                 node.type=symbol.type;
                 node.symbol=symbol;
             }
             else throw new semanticError("can't find identifier in class",node.pos);
+        }
+        else if (node.type instanceof ArrayType){
+            System.out.println("init");
+            if (node.identifier.equals("size")){
+                Symbol symbol=currentScope.findSymbol("*size*",node.pos);
+                node.exprType=ExprNode.ExprType.FUNCTION;
+                node.type=new IntType();
+                node.symbol=symbol;
+            }
+            else throw new semanticError("not the size of array",node.pos);
         }
         else throw new semanticError("memberExprNode error",node.pos);
         //Array was not necessary.
@@ -330,6 +359,9 @@ public class SemanticChecker implements ASTVisitor{
                 throw new semanticError ("parameter size not match",node.pos);
             }
             node.parameterList.accept(this);
+            for (int i=0; i<node.parameterList.exprList.size(); ++i){
+                node.parameterList.exprList.get(i).type.check(((LocalScope)funcSymbol.scope).parameterList.get(i).type,node.pos);
+            }
             node.type=funcSymbol.type;
             node.exprType=ExprNode.ExprType.RVALUE;
         }

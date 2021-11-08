@@ -13,9 +13,10 @@ public class ASTBuilder extends MxBaseVisitor <ASTNode>{
     @Override
     public ASTNode visitProgram(MxParser.ProgramContext ctx){
         RootNode root=new RootNode(new position(ctx));
-        ctx.varDef().forEach(vd -> root.strDefs.add((varDefNode)visit(vd)));
-        ctx.classDef().forEach(cd -> root.strDefs.add((classDefNode) visit(cd)));
-        ctx.functionDef().forEach(fd-> root.strDefs.add((funcDefNode) visit(fd)));
+        ctx.varDef().forEach(vd -> root.strDefs.add(visit(vd)));
+        ctx.classDef().forEach(cd -> root.strDefs.add(visit(cd)));
+        ctx.functionDef().forEach(fd-> root.strDefs.add(visit(fd)));
+        root.strDefs.sort(ASTNode::compareTo);
         return root;
     }
 
@@ -169,7 +170,7 @@ public class ASTBuilder extends MxBaseVisitor <ASTNode>{
 
     @Override
     public ASTNode visitAtomExpr(MxParser.AtomExprContext ctx){
-        return (primaryExprNode)visit(ctx.primary());
+        return visit(ctx.primary());
     }
 
     public ASTNode visitPrimary(MxParser.PrimaryContext ctx){
@@ -183,7 +184,7 @@ public class ASTBuilder extends MxBaseVisitor <ASTNode>{
             return new thisPrimaryNode(new position(ctx));
         }
         else if (ctx.literal()!=null){
-            return (literalPrimaryNode)visit(ctx.literal());
+            return visit(ctx.literal());
         }
         throw new builderError("primary error",new position(ctx));
     }

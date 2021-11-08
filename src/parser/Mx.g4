@@ -12,10 +12,10 @@ suite : '{' statement * '}';
 
 statement
     : suite                                                                                #block
-    | varDef ';'                                                                           #varDefStmt
+    | varDef                                                                               #varDefStmt
     | If '(' expression ')' trueStmt=statement
         (Else falseStmt=statement)?                                                        #ifStmt
-    | For '(' (prework=expression |prevar=varDef)? ';' (condition=expression)? ';' (loopexpression=expression)? ')' statement     #forStmt
+    | For '(' ((prework=expression ';')| (prevar=varDef)| ';') (condition=expression)? ';' (loopexpression=expression)? ')' statement     #forStmt
     | Continue ';'                                                                         #continueStmt
     | Break ';'                                                                            #breakStmt
     | Return expression? ';'                                                               #returnStmt
@@ -23,14 +23,14 @@ statement
     | expression ';'                                                                       #expressionStmt
     ;
 
-varDef : varType varDeclaration (',' varDeclaration)*;
+varDef : varType varDeclaration (',' varDeclaration)* ';';
 
 varDeclaration : Identifier ('=' expression)?;
 
 classDef
     : Class Identifier '{' (classMemberDef | classFunctionDef) * '}' ';';
 
-classMemberDef : varDef ';';
+classMemberDef : varDef;
 
 classFunctionDef : functionDef
                  | classConstructFuncDef
@@ -72,9 +72,9 @@ builtinType : Int | Bool | String;
 
 primary
     : '(' expression ')'
-    | Identifier
     | This
     | literal
+    | Identifier
     ;
 
 literal
@@ -100,7 +100,7 @@ New : 'new';
 This : 'this';
 Continue : 'continue';
 Break : 'break';
-Null : 'NULL';
+Null : 'null';
 While : 'while';
 
 Dot : '.';
