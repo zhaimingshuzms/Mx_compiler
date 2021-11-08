@@ -27,8 +27,16 @@ public class LocalScope implements Scope{
         while (globalScope instanceof LocalScope){
             globalScope=globalScope.Parent();
         }
-        if (varMap.containsKey(s)||funcMap.containsKey(s)||((GlobalScope)globalScope).classMap.containsKey(s)){
+        if (varMap.containsKey(s)||funcMap.containsKey(s)){
             throw new semanticError("local scope check error",pos);
+        }
+        else if (((GlobalScope)globalScope).classMap.containsKey(s)){//x.x case
+            LocalScope classScope=(LocalScope) ((GlobalScope) globalScope).classMap.get(s).scope;
+            Scope tmpScope=this;
+            while (!tmpScope.equals(classScope)&&(tmpScope instanceof LocalScope)){
+                tmpScope=((LocalScope) tmpScope).parent;
+            }
+            if (!tmpScope.equals(classScope)) throw new semanticError("local scope check error",pos);
         }
     }
 

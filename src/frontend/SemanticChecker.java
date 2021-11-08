@@ -44,7 +44,7 @@ public class SemanticChecker implements ASTVisitor{
         FuncSymbol GetString=new FuncSymbol(new position(-1,-1),"getString",new StringType(),new LocalScope(currentScope));
         currentScope.registerFunc(GetString,new position(-1,-1));
 
-        FuncSymbol GetInt=new FuncSymbol(new position(-1,-1),"getInt",new StringType(),new LocalScope(currentScope));
+        FuncSymbol GetInt=new FuncSymbol(new position(-1,-1),"getInt",new IntType(),new LocalScope(currentScope));
         currentScope.registerFunc(GetInt,new position(-1,-1));
 
         FuncSymbol ToString=new FuncSymbol(new position(-1,-1),"toString",new StringType(),new LocalScope(currentScope));
@@ -73,7 +73,7 @@ public class SemanticChecker implements ASTVisitor{
         string.scope.registerFunc(Ord,new position(-1,-1));
 
         FuncSymbol ArraySize=new FuncSymbol(new position(-1,-1),"*size*",new IntType(),new LocalScope(currentScope));
-        string.scope.registerFunc(ArraySize,new position(-1,-1));
+        currentScope.registerFunc(ArraySize,new position(-1,-1));
 
         currentScope.registerClass(Int,new position(-1, -1));
         currentScope.registerClass(Bool,new position(-1, -1));
@@ -95,6 +95,7 @@ public class SemanticChecker implements ASTVisitor{
         boolean checkMain = false;
         for (var i : node.strDefs)
             if (i instanceof classDefNode) {
+                currentClass=((classDefNode) i).symbol;
                 currentScope = i.scope;
                 visitMember = true;
                 ((classDefNode) i).varDefs.forEach(x -> x.accept(this));
@@ -129,6 +130,7 @@ public class SemanticChecker implements ASTVisitor{
                     currentScope=j.scope.Parent();
                 }
                 currentScope = i.scope.Parent();
+                currentClass =null;
             } else if (i instanceof funcDefNode) {
                 ((funcDefNode) i).returnType.accept(this);
                 Type type = new voidType();
@@ -232,8 +234,7 @@ public class SemanticChecker implements ASTVisitor{
             }
             else throw new semanticError("can't find identifier in class",node.pos);
         }
-        else if (node.type instanceof ArrayType){
-            System.out.println("init");
+        else if (node.expression.type instanceof ArrayType){
             if (node.identifier.equals("size")){
                 Symbol symbol=currentScope.findSymbol("*size*",node.pos);
                 node.exprType=ExprNode.ExprType.FUNCTION;
@@ -597,8 +598,6 @@ public class SemanticChecker implements ASTVisitor{
         node.scope=currentScope;
         node.identifier.accept(this);
         node.index.accept(this);
-        System.out.println("BB "+node.identifier.type.getType());
-        System.out.println(node.identifier.type.getDim());
         if (!(node.identifier.type instanceof ArrayType)){
             throw new semanticError("SubArrayExprNode identifier ERROR",node.pos);
         }
