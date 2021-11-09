@@ -227,7 +227,7 @@ public class SemanticChecker implements ASTVisitor{
                 node.type=symbol.type;
                 node.symbol=symbol;
             }
-            else if (node.symbol.type instanceof VarSymbol){
+            else if (symbol instanceof VarSymbol){
                 node.exprType=ExprNode.ExprType.LVALUE;
                 node.type=symbol.type;
                 node.symbol=symbol;
@@ -361,7 +361,7 @@ public class SemanticChecker implements ASTVisitor{
             }
             node.parameterList.accept(this);
             for (int i=0; i<node.parameterList.exprList.size(); ++i){
-                node.parameterList.exprList.get(i).type.check(((LocalScope)funcSymbol.scope).parameterList.get(i).type,node.pos);
+                ((LocalScope)funcSymbol.scope).parameterList.get(i).type.check(node.parameterList.exprList.get(i).type,node.pos);
             }
             node.type=funcSymbol.type;
             node.exprType=ExprNode.ExprType.RVALUE;

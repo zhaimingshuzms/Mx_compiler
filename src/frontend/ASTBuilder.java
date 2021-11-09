@@ -88,8 +88,8 @@ public class ASTBuilder extends MxBaseVisitor <ASTNode>{
             suite=new suiteStmtNode(tmp.pos);
             suite.innerStmt.add(tmp);
         }
-        if (ctx.prework.isEmpty()) node=new forStmtNode((varDefListNode)visit(ctx.prevar),condition,loopexpression,suite,new position(ctx));
-        else if (ctx.prevar.isEmpty()) node=new forStmtNode((ExprNode)visit(ctx.prework),condition,loopexpression,suite,new position(ctx));
+        if (ctx.prework==null) node=new forStmtNode((varDefListNode)visit(ctx.prevar),condition,loopexpression,suite,new position(ctx));
+        else if (ctx.prevar==null) node=new forStmtNode((ExprNode)visit(ctx.prework),condition,loopexpression,suite,new position(ctx));
         else node=new forStmtNode(condition,loopexpression,suite,new position(ctx));
         return node;
     }
