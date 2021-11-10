@@ -1,17 +1,36 @@
 /*
 Test Package: Sema_Local_Preview
 Test Target: Basic
-Author: 16' Jiangbei Li
-Time: 2019-11-11
-Verdict: Fail
-Comment: a is not a class.
-Origin Package: Semantic Pretest
+Author: Pikachu
+Time: 2020-02-02
+Verdict: Success
+Origin Package: Semantic
 */
-class A{
-	int a;
-};
-A a;
 int main() {
-    A b = new a();
-	return 0;
+    int a;
+    bool b;
+    string c;
+    bool flag = true;
+    {
+        if (b == b) {
+            flag = false;
+        }
+        int b;
+        bool c;
+        int a;
+        {
+            int c;
+            if (a + a - a == a) {
+                flag = true;
+            }
+            bool a;
+            string b;                                                                                                 {int [][][][][][][][][][][][][][][][][][][][] a = new int [1][1][1][1][1][1][1][1][1][1][1][1][1][1][1][][][][][];
+                {
+                    return 0;
+                }
+            }
+        }
+    }
+    return 0;
+    return 0;
 }

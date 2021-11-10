@@ -8,6 +8,7 @@ public interface ASTVisitor {
     void visit(breakStmtNode node);
     void visit(classDefNode node);
     void visit(continueStmtNode node);
+    void visit(emptyStmtNode node);
     //void visit(ExprNode node);
     void visit(exprListNode node);
     void visit(exprPrimaryNode node);

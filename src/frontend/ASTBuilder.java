@@ -88,8 +88,8 @@ public class ASTBuilder extends MxBaseVisitor <ASTNode>{
             suite=new suiteStmtNode(tmp.pos);
             suite.innerStmt.add(tmp);
         }
-        if (ctx.prework==null) node=new forStmtNode((varDefListNode)visit(ctx.prevar),condition,loopexpression,suite,new position(ctx));
-        else if (ctx.prevar==null) node=new forStmtNode((ExprNode)visit(ctx.prework),condition,loopexpression,suite,new position(ctx));
+        if (ctx.prevar!=null) node=new forStmtNode((varDefListNode)visit(ctx.prevar),condition,loopexpression,suite,new position(ctx));
+        else if (ctx.prework!=null) node=new forStmtNode((ExprNode)visit(ctx.prework),condition,loopexpression,suite,new position(ctx));
         else node=new forStmtNode(condition,loopexpression,suite,new position(ctx));
         return node;
     }
@@ -132,6 +132,10 @@ public class ASTBuilder extends MxBaseVisitor <ASTNode>{
         return new exprStmtNode((ExprNode)visit(ctx.expression()),new position(ctx));
     }
 
+    @Override
+    public ASTNode visitEmptyStmt(MxParser.EmptyStmtContext ctx){
+        return new emptyStmtNode(new position(ctx));
+    }
     @Override
     public ASTNode visitVarDef(MxParser.VarDefContext ctx){
         varTypeNode varType=(varTypeNode) visit(ctx.varType());
@@ -244,7 +248,15 @@ public class ASTBuilder extends MxBaseVisitor <ASTNode>{
         else if (ctx.Caret()!=null) biOp=binaryOpType.ariXor;
         else if (ctx.AndAnd()!=null) biOp=binaryOpType.logicAnd;
         else if (ctx.OrOr()!=null) biOp=binaryOpType.logicOr;
+        else if (ctx.Mul()!=null) biOp=binaryOpType.mul;
+        else if (ctx.Div()!=null) biOp=binaryOpType.div;
+        else if (ctx.Mod()!=null) biOp=binaryOpType.mod;
         return new binaryExprNode(lhs,rhs,biOp,new position(ctx));
+    }
+
+    @Override
+    public ASTNode visitErrorType(MxParser.ErrorTypeContext ctx){
+        throw new builderError("visit Error Type",new position(ctx));
     }
 
     @Override
@@ -305,6 +317,16 @@ public class ASTBuilder extends MxBaseVisitor <ASTNode>{
         else if (ctx.Identifier()!=null)
             return new scaledTypeNode(new varTypeNode(ctx.Identifier().getText(),new position(ctx)),new position(ctx));
         throw new builderError("basicTypeerror",new position(ctx));
+    }
+
+    @Override
+    public ASTNode visitClassType(MxParser.ClassTypeContext ctx){
+        if (ctx.builtinType()!=null){
+            return new scaledTypeNode(new varTypeNode(ctx.builtinType().getText(),new position(ctx)),new position(ctx));
+        }
+        else if (ctx.Identifier()!=null)
+            return new scaledTypeNode(new varTypeNode(ctx.Identifier().getText(),new position(ctx)),new position(ctx));
+        throw new builderError("classTypeerror",new position(ctx));
     }
 
     @Override

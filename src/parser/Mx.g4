@@ -21,6 +21,7 @@ statement
     | Return expression? ';'                                                               #returnStmt
     | While expression ? statement                                                         #whileStmt
     | expression ';'                                                                       #expressionStmt
+    | ';'                                                                                  #emptyStmt
     ;
 
 varDef : varType varDeclaration (',' varDeclaration)* ';';
@@ -45,17 +46,18 @@ expression
     | expression '(' parameterList? ')'                                                    #funcExpr
     | expression op=('++'|'--')                                                            #suffixExpr
     | expression '.' Identifier                                                            #memberExpr
-    | expression op=('+'|'-') expression                                                   #binaryExpr
-    | expression op=('*'|'/'|'%') expression                                               #binaryExpr
-    | expression op=('<<'|'>>') expression                                                 #binaryExpr
-    | expression op=('<'|'<='|'>'|'>=') expression                                         #binaryExpr
-    | expression op=('=='|'!=') expression                                                 #binaryExpr
-    | expression op=('&'|'^'|'|') expression                                               #binaryExpr
-    | expression op='&&' expression                                                        #binaryExpr
-    | expression op='||' expression                                                        #binaryExpr
     | <assoc=right> op=('++'|'--') expression                                              #prefixExpr
     | <assoc=right> op=('+'|'-') expression                                                #prefixExpr
     | <assoc=right> op=('!'|'~') expression                                                #prefixExpr
+    | expression op=('*'|'/'|'%') expression                                               #binaryExpr
+    | expression op=('+'|'-') expression                                                   #binaryExpr
+    | expression op=('<<'|'>>') expression                                                 #binaryExpr
+    | expression op=('<'|'<='|'>'|'>='|'=='|'!=') expression                               #binaryExpr
+    | expression op='&' expression                                                         #binaryExpr
+    | expression op='^' expression                                                         #binaryExpr
+    | expression op='|' expression                                                         #binaryExpr
+    | expression op='&&' expression                                                        #binaryExpr
+    | expression op='||' expression                                                        #binaryExpr
     | <assoc=right> expression '=' expression                                              #assignExpr
     | lamdaexpression                                                                      #lambdaExpr
     ;
@@ -65,7 +67,9 @@ lamdaexpression :'[&]' ('(' functionParameterDef ')')? '->' suite;
 returnType : Void | varType;
 varType : builtinType | Identifier | varType ('[' ']')+;
 scaledType
-    : (builtinType | Identifier) ('[' expression ']')+('[' ']')*                                        #arrayType
+    : (builtinType | Identifier) ('[' expression ']')+('[' ']')+('[' expression ']')+                   #errorType
+    | (builtinType | Identifier) ('[' expression ']')+('[' ']')*                                        #arrayType
+    | (builtinType | Identifier) '(' ')'                                                                #classType
     | (builtinType | Identifier)                                                                        #basicType
     ;
 builtinType : Int | Bool | String;

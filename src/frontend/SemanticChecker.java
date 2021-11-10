@@ -1,6 +1,7 @@
 package frontend;
 
 import ast.*;
+import com.sun.jdi.VoidType;
 import error.semanticError;
 import parser.MxParser;
 import util.*;
@@ -69,6 +70,8 @@ public class SemanticChecker implements ASTVisitor{
         string.scope.registerFunc(ParseInt,new position(-1,-1));
 
         FuncSymbol Ord=new FuncSymbol(new position(-1,-1),"ord",new IntType(),new LocalScope(string.scope));
+        VarSymbol Pos=new VarSymbol(new position(-1,01),"pos",new IntType(),Ord.scope);
+        ((LocalScope)Ord.scope).registerPara(Pos,new position(-1,-1));
         Ord.member=true;
         string.scope.registerFunc(Ord,new position(-1,-1));
 
@@ -82,7 +85,7 @@ public class SemanticChecker implements ASTVisitor{
     }
     @Override
     public void visit(RootNode node) {
-        System.out.println("visit rootnode");
+        //System.out.println("visit rootnode");
         for (var i : node.strDefs)
             if (i instanceof classDefNode) {
                 ClassSymbol classSymbol = new ClassSymbol(i.pos, ((classDefNode) i).name, new ClassType(((classDefNode) i).name), i);
@@ -108,8 +111,8 @@ public class SemanticChecker implements ASTVisitor{
                         }
                     }
 
-                    Type type = null;
-                    if (j.returnType.type!= null) {
+                    Type type =new voidType();
+                    if (j.returnType!= null&&j.returnType.type!=null) {
                         j.returnType.accept(this);
                         String baseType = j.returnType.type.type;
                         int dim = j.returnType.type.dim;
@@ -126,7 +129,7 @@ public class SemanticChecker implements ASTVisitor{
                     j.scope = funcSymbol.scope;
                     currentScope.registerFunc(funcSymbol, j.pos);
                     currentScope=j.scope;
-                    j.accept(this);
+                    j.parameterList.forEach(x->x.accept(this));
                     currentScope=j.scope.Parent();
                 }
                 currentScope = i.scope.Parent();
@@ -149,6 +152,9 @@ public class SemanticChecker implements ASTVisitor{
                 ((funcDefNode) i).symbol = funcSymbol;
                 i.scope = funcSymbol.scope;
                 currentScope.registerFunc(funcSymbol, i.pos);
+                currentScope=i.scope;
+                ((funcDefNode) i).parameterList.forEach(x->x.accept(this));
+                currentScope=i.scope.Parent();
                 if (((funcDefNode) i).identifier.equals("main")) {
                     if (((funcDefNode) i).returnType.type==null){
                         throw new semanticError("main with not void returnType",node.pos);
@@ -158,15 +164,14 @@ public class SemanticChecker implements ASTVisitor{
                     }
                     checkMain = true;
                 }
-                currentScope = i.scope;
-                i.accept(this);
-                currentScope = i.scope.Parent();
             }
-            else if (i instanceof varDefListNode){
-                i.accept(this);
+            else if (i instanceof varDefListNode){//nothing
             }
             else throw new semanticError("Rootnode error", node.pos);
         if (!checkMain) throw new semanticError("no main error", node.pos);
+        for (var i:node.strDefs){//先注册再分析
+            i.accept(this);
+        }
     }
     @Override
     public void visit(assignExprNode node){
@@ -219,6 +224,7 @@ public class SemanticChecker implements ASTVisitor{
         node.scope=currentScope;
         node.expression.accept(this);
         node.expression.assertValue();
+//        System.out.println(node.expression.type.getType());
         if (node.expression.type instanceof ClassType||node.expression.type instanceof StringType){
             ClassSymbol classSymbol=currentScope.findClassSymbol(node.expression.type.getType(),node.pos);
             Symbol symbol=classSymbol.scope.findSymbol(node.identifier,node.pos);
@@ -300,22 +306,25 @@ public class SemanticChecker implements ASTVisitor{
     }
 
     @Override
+    public void visit(emptyStmtNode node) {
+        node.scope=currentScope;
+    }
+
+    @Override
     public void visit(funcDefNode node){
+        Scope past=currentScope;
         FuncSymbol funcSymbol=node.symbol;
-        currentFunc=funcSymbol;
-        for (var i:node.parameterList){
-            i.accept(this);
-            currentScope=funcSymbol.scope;
-        }
         currentScope=funcSymbol.scope;
+        currentFunc=funcSymbol;
         node.suite.accept(this);
         currentScope=funcSymbol.scope;
-        if (node.isConstructer&&node.returnExistence) {
+        if (node.isConstructer&&node.returnExistence&&node.returnType!=null) {
             throw new semanticError("constructer with return",node.pos);
         }
         if (!node.isConstructer&&!node.returnExistence&&!node.identifier.equals("main")&&node.returnType.type!=null){
             throw new semanticError("function with no return",node.pos);
         }
+        currentScope=past;
     }
 
     @Override
@@ -409,7 +418,7 @@ public class SemanticChecker implements ASTVisitor{
                 node.type=new StringType();
                 node.exprType=ExprNode.ExprType.RVALUE;
             }
-            else throw new semanticError("BinaryExprNode error",node.pos);
+            else throw new semanticError("BinaryExprNode error 1",node.pos);
         }
         else if (op== binaryExprNode.binaryOpType.less||
                 op== binaryExprNode.binaryOpType.lessequal||
@@ -419,14 +428,14 @@ public class SemanticChecker implements ASTVisitor{
                 node.type=new boolType();
                 node.exprType=ExprNode.ExprType.RVALUE;
             }
-            else throw new semanticError("BinaryExprNode error",node.pos);
+            else throw new semanticError("BinaryExprNode error 2",node.pos);
         }
         else if (op==binaryExprNode.binaryOpType.equal ||op==binaryExprNode.binaryOpType.notequal){
             lhs.type.checkEqual(rhs.type,node.pos);
             node.type=new boolType();
             node.exprType= ExprNode.ExprType.RVALUE;
         }
-        else throw new semanticError("BinaryExprNode error",node.pos);
+        else throw new semanticError("BinaryExprNode error 3",node.pos);
     }
 
     @Override
@@ -633,7 +642,7 @@ public class SemanticChecker implements ASTVisitor{
     @Override
     public void visit(breakStmtNode node){
         node.scope=currentScope;
-        if (currentScope==null){
+        if (currentLoop==null){
             throw new semanticError("break into nothing",node.pos);
         }
         node.loopNode=currentLoop;

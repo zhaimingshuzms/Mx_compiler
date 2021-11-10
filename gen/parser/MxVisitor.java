@@ -104,6 +104,13 @@ public interface MxVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitExpressionStmt(MxParser.ExpressionStmtContext ctx);
 	/**
+	 * Visit a parse tree produced by the {@code emptyStmt}
+	 * labeled alternative in {@link MxParser#statement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitEmptyStmt(MxParser.EmptyStmtContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link MxParser#varDef}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -228,12 +235,26 @@ public interface MxVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitVarType(MxParser.VarTypeContext ctx);
 	/**
+	 * Visit a parse tree produced by the {@code errorType}
+	 * labeled alternative in {@link MxParser#scaledType}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitErrorType(MxParser.ErrorTypeContext ctx);
+	/**
 	 * Visit a parse tree produced by the {@code arrayType}
 	 * labeled alternative in {@link MxParser#scaledType}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitArrayType(MxParser.ArrayTypeContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code classType}
+	 * labeled alternative in {@link MxParser#scaledType}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitClassType(MxParser.ClassTypeContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code basicType}
 	 * labeled alternative in {@link MxParser#scaledType}.

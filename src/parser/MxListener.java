@@ -166,6 +166,18 @@ public interface MxListener extends ParseTreeListener {
 	 */
 	void exitExpressionStmt(MxParser.ExpressionStmtContext ctx);
 	/**
+	 * Enter a parse tree produced by the {@code emptyStmt}
+	 * labeled alternative in {@link MxParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void enterEmptyStmt(MxParser.EmptyStmtContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code emptyStmt}
+	 * labeled alternative in {@link MxParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void exitEmptyStmt(MxParser.EmptyStmtContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link MxParser#varDef}.
 	 * @param ctx the parse tree
 	 */
@@ -376,6 +388,18 @@ public interface MxListener extends ParseTreeListener {
 	 */
 	void exitVarType(MxParser.VarTypeContext ctx);
 	/**
+	 * Enter a parse tree produced by the {@code errorType}
+	 * labeled alternative in {@link MxParser#scaledType}.
+	 * @param ctx the parse tree
+	 */
+	void enterErrorType(MxParser.ErrorTypeContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code errorType}
+	 * labeled alternative in {@link MxParser#scaledType}.
+	 * @param ctx the parse tree
+	 */
+	void exitErrorType(MxParser.ErrorTypeContext ctx);
+	/**
 	 * Enter a parse tree produced by the {@code arrayType}
 	 * labeled alternative in {@link MxParser#scaledType}.
 	 * @param ctx the parse tree
@@ -387,6 +411,18 @@ public interface MxListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitArrayType(MxParser.ArrayTypeContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code classType}
+	 * labeled alternative in {@link MxParser#scaledType}.
+	 * @param ctx the parse tree
+	 */
+	void enterClassType(MxParser.ClassTypeContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code classType}
+	 * labeled alternative in {@link MxParser#scaledType}.
+	 * @param ctx the parse tree
+	 */
+	void exitClassType(MxParser.ClassTypeContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code basicType}
 	 * labeled alternative in {@link MxParser#scaledType}.
