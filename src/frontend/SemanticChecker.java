@@ -224,7 +224,6 @@ public class SemanticChecker implements ASTVisitor{
         node.scope=currentScope;
         node.expression.accept(this);
         node.expression.assertValue();
-//        System.out.println(node.expression.type.getType());
         if (node.expression.type instanceof ClassType||node.expression.type instanceof StringType){
             ClassSymbol classSymbol=currentScope.findClassSymbol(node.expression.type.getType(),node.pos);
             Symbol symbol=classSymbol.scope.findSymbol(node.identifier,node.pos);
@@ -337,6 +336,7 @@ public class SemanticChecker implements ASTVisitor{
             currentScope=func.scope.Parent();
             currentFunc=null;
         }
+        currentScope=classSymbol.scope.Parent();
     }
 
     @Override
