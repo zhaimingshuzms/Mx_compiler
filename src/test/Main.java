@@ -18,10 +18,13 @@ public class Main {
 
     public static void main(String[] args) throws Exception {
         //System.out.println("Hello Compiler");
-        //for (int i=7; i<=7; ++i) {
-            //String name = "C:\\Users\\zhaimingshuzms\\Desktop\\Compiler\\Mx_compiler\\src\\test\\sema\\symbol-package\\symbol-"+i+".mx";
-        String name="test.mx";
-        InputStream input = new FileInputStream(name);
+        for (int i=7; i<=7; ++i)
+        {
+//            String name = "C:\\Users\\zhaimingshuzms\\Desktop\\Compiler\\Mx_compiler\\src\\test\\sema\\symbol-package\\symbol-"+i+".mx";
+        //String name="test.mx";
+
+        //InputStream input = new FileInputStream(name);
+        InputStream input=System.in;
         try {
             MxLexer lexer = new MxLexer(CharStreams.fromStream(input));
             //lexer.removeErrorListeners();
@@ -36,11 +39,11 @@ public class Main {
             ASTVisitor visitor = new SemanticChecker();
             visitor.visit(ret);
         } catch (error er) {
-            //System.err.println(i);
-            //System.err.println(er.toString());
+            System.err.println(i);
+            System.err.println(er.toString());
             throw new RuntimeException();
         }
-        //}
+        }
     }
 
 }
