@@ -1,5 +1,3 @@
-package test;
-
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.security.spec.RSAOtherPrimeInfo;
