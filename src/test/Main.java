@@ -25,6 +25,7 @@ public class Main {
         //String name="test.mx";
 
         //InputStream input = new FileInputStream(name);
+        System.err.println("what's wrong");
         InputStream input=System.in;
         try {
             MxLexer lexer = new MxLexer(CharStreams.fromStream(input));
