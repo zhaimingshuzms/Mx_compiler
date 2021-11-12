@@ -1,1 +1,1 @@
-java -jar out/artifacts/Mx_compiler.jar
+java -jar src/test/Mx_compiler.jar
