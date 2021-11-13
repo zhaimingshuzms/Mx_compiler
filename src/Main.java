@@ -20,10 +20,10 @@ public class Main {
         //for (int i=7; i<=7; ++i)
         //{
 //            String name = "C:\\Users\\zhaimingshuzms\\Desktop\\Compiler\\Mx_compiler\\src\\test\\sema\\symbol-package\\symbol-"+i+".mx";
-        String name="test.mx";
+//        String name="test.mx";
 
-        InputStream input = new FileInputStream(name);
-        //InputStream input=System.in;
+//        InputStream input = new FileInputStream(name);
+        InputStream input=System.in;
         try {
             MxLexer lexer = new MxLexer(CharStreams.fromStream(input));
             lexer.removeErrorListeners();
