@@ -31,14 +31,14 @@ public class MxParser extends Parser {
 		RULE_program = 0, RULE_functionDef = 1, RULE_functionParameterDef = 2, 
 		RULE_parameterList = 3, RULE_suite = 4, RULE_statement = 5, RULE_varDef = 6, 
 		RULE_varDeclaration = 7, RULE_classDef = 8, RULE_classMemberDef = 9, RULE_classFunctionDef = 10, 
-		RULE_classConstructFuncDef = 11, RULE_expression = 12, RULE_lamdaexpression = 13, 
+		RULE_classConstructFuncDef = 11, RULE_expression = 12, RULE_lambdaexpression = 13, 
 		RULE_returnType = 14, RULE_varType = 15, RULE_scaledType = 16, RULE_builtinType = 17, 
 		RULE_primary = 18, RULE_literal = 19;
 	private static String[] makeRuleNames() {
 		return new String[] {
 			"program", "functionDef", "functionParameterDef", "parameterList", "suite", 
 			"statement", "varDef", "varDeclaration", "classDef", "classMemberDef", 
-			"classFunctionDef", "classConstructFuncDef", "expression", "lamdaexpression", 
+			"classFunctionDef", "classConstructFuncDef", "expression", "lambdaexpression", 
 			"returnType", "varType", "scaledType", "builtinType", "primary", "literal"
 		};
 	}
@@ -1407,8 +1407,8 @@ public class MxParser extends Parser {
 		}
 	}
 	public static class LambdaExprContext extends ExpressionContext {
-		public LamdaexpressionContext lamdaexpression() {
-			return getRuleContext(LamdaexpressionContext.class,0);
+		public LambdaexpressionContext lambdaexpression() {
+			return getRuleContext(LambdaexpressionContext.class,0);
 		}
 		public LambdaExprContext(ExpressionContext ctx) { copyFrom(ctx); }
 		@Override
@@ -1692,7 +1692,7 @@ public class MxParser extends Parser {
 				_ctx = _localctx;
 				_prevctx = _localctx;
 				setState(185);
-				lamdaexpression();
+				lambdaexpression();
 				}
 				break;
 			default:
@@ -1953,7 +1953,7 @@ public class MxParser extends Parser {
 		return _localctx;
 	}
 
-	public static class LamdaexpressionContext extends ParserRuleContext {
+	public static class LambdaexpressionContext extends ParserRuleContext {
 		public SuiteContext suite() {
 			return getRuleContext(SuiteContext.class,0);
 		}
@@ -1962,28 +1962,28 @@ public class MxParser extends Parser {
 			return getRuleContext(FunctionParameterDefContext.class,0);
 		}
 		public TerminalNode RightParen() { return getToken(MxParser.RightParen, 0); }
-		public LamdaexpressionContext(ParserRuleContext parent, int invokingState) {
+		public LambdaexpressionContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_lamdaexpression; }
+		@Override public int getRuleIndex() { return RULE_lambdaexpression; }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof MxListener ) ((MxListener)listener).enterLamdaexpression(this);
+			if ( listener instanceof MxListener ) ((MxListener)listener).enterLambdaexpression(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof MxListener ) ((MxListener)listener).exitLamdaexpression(this);
+			if ( listener instanceof MxListener ) ((MxListener)listener).exitLambdaexpression(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof MxVisitor ) return ((MxVisitor<? extends T>)visitor).visitLamdaexpression(this);
+			if ( visitor instanceof MxVisitor ) return ((MxVisitor<? extends T>)visitor).visitLambdaexpression(this);
 			else return visitor.visitChildren(this);
 		}
 	}
 
-	public final LamdaexpressionContext lamdaexpression() throws RecognitionException {
-		LamdaexpressionContext _localctx = new LamdaexpressionContext(_ctx, getState());
-		enterRule(_localctx, 26, RULE_lamdaexpression);
+	public final LambdaexpressionContext lambdaexpression() throws RecognitionException {
+		LambdaexpressionContext _localctx = new LambdaexpressionContext(_ctx, getState());
+		enterRule(_localctx, 26, RULE_lambdaexpression);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);

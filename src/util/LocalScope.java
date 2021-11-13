@@ -11,6 +11,7 @@ public class LocalScope implements Scope{
     public HashMap<String,VarSymbol> varMap;
     public HashMap<String,FuncSymbol> funcMap;
     public List<VarSymbol> parameterList;
+    public int lambdaCount=0;
     public LocalScope(Scope s){
         varMap=new HashMap<>();
         funcMap=new HashMap<>();

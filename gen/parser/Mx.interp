@@ -142,7 +142,7 @@ classMemberDef
 classFunctionDef
 classConstructFuncDef
 expression
-lamdaexpression
+lambdaexpression
 returnType
 varType
 scaledType

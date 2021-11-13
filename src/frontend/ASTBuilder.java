@@ -367,5 +367,15 @@ public class ASTBuilder extends MxBaseVisitor <ASTNode>{
         else if (ctx.False()!=null) return new boolLiteralNode(false,new position(ctx));
         throw new semanticError("literalNode error",new position(ctx));
     }
+
+    @Override
+    public ASTNode visitLambdaExpr(MxParser.LambdaExprContext ctx){
+        return visit(ctx.lambdaexpression());
+    }
+
+    @Override
+    public ASTNode visitLambdaexpression(MxParser.LambdaexpressionContext ctx){
+        return new LambdaExprNode(((varDefListNode)visit(ctx.functionParameterDef())).varList,(suiteStmtNode) visit(ctx.suite()),new position(ctx));
+    }
     //above is verified.
 }

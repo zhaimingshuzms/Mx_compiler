@@ -20,6 +20,7 @@ public interface ASTVisitor {
     void visit(ifStmtNode node);
     void visit(integerLiteralNode node);
     //void visit(literalPrimaryNode node);
+    void visit(LambdaExprNode node);
     void visit(memberExprNode node);
     void visit(newExprNode node);
     void visit(nullLiteralNode node);

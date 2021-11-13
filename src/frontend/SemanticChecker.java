@@ -363,6 +363,9 @@ public class SemanticChecker implements ASTVisitor{
             else if (expression instanceof memberExprNode){
                 funcSymbol=(FuncSymbol)((memberExprNode)(expression)).symbol;
             }
+            else if (expression instanceof LambdaExprNode){
+                funcSymbol=(FuncSymbol)((LambdaExprNode) expression).symbol;
+            }
             else throw new semanticError("func expression instance error",node.pos);
             node.symbol=funcSymbol;
             if (((LocalScope)(funcSymbol.scope)).parameterList.size()!=node.parameterList.exprList.size()){
@@ -587,6 +590,25 @@ public class SemanticChecker implements ASTVisitor{
         currentLoop=upLoop;
     }
 
+    @Override
+    public void visit(LambdaExprNode node){
+        var pastScope=currentScope;
+        var pastFunc=currentFunc;
+        node.scope=new LocalScope(currentScope);
+        node.exprType= ExprNode.ExprType.FUNCTION;
+        ++((LocalScope)currentScope).lambdaCount;
+        node.symbol=new FuncSymbol(node.pos,"*lambda*"+((LocalScope)currentScope).lambdaCount,null,node.scope);
+        node.symbol.definition=node;
+        currentScope.registerFunc((FuncSymbol)node.symbol,node.pos);
+        currentScope=node.scope;
+        node.parameterList.forEach(x->x.accept(this));
+        currentFunc=(FuncSymbol) node.symbol;
+        visit(node.suite);
+        node.symbol=currentFunc;//return value type
+        node.type=currentFunc.type;//return value type
+        currentScope=pastScope;
+        currentFunc=pastFunc;
+    }
 
     @Override
     public void visit(suffixExprNode node){
@@ -680,14 +702,20 @@ public class SemanticChecker implements ASTVisitor{
         }
         else if (node.value==null){
             voidType vt=new voidType();
-            vt.check(currentFunc.type,node.pos);
-            ((funcDefNode)(currentFunc.definition)).returnExistence=true;
+            if (currentFunc.type!=null){
+                vt.check(currentFunc.type,node.pos);
+                ((funcDefNode)(currentFunc.definition)).returnExistence=true;
+            }
+            else currentFunc.type=new voidType();//lambda case
         }
         else{
             node.value.accept(this);
             node.value.assertValue();
-            currentFunc.type.check(node.value.type,node.pos);
-            ((funcDefNode)(currentFunc.definition)).returnExistence=true;
+            if (currentFunc.type!=null){
+                currentFunc.type.check(node.value.type,node.pos);
+                ((funcDefNode)(currentFunc.definition)).returnExistence=true;
+            }
+            else currentFunc.type=node.value.type;
         }
     }
 

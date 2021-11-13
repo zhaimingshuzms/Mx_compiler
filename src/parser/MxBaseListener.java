@@ -388,13 +388,13 @@ public class MxBaseListener implements MxListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterLamdaexpression(MxParser.LamdaexpressionContext ctx) { }
+	@Override public void enterLambdaexpression(MxParser.LambdaexpressionContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitLamdaexpression(MxParser.LamdaexpressionContext ctx) { }
+	@Override public void exitLambdaexpression(MxParser.LambdaexpressionContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

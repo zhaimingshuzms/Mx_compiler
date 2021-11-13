@@ -59,10 +59,10 @@ expression
     | expression op='&&' expression                                                        #binaryExpr
     | expression op='||' expression                                                        #binaryExpr
     | <assoc=right> expression '=' expression                                              #assignExpr
-    | lamdaexpression                                                                      #lambdaExpr
+    | lambdaexpression                                                                     #lambdaExpr
     ;
 
-lamdaexpression :'[&]' ('(' functionParameterDef ')')? '->' suite;
+lambdaexpression :'[&]' ('(' functionParameterDef ')')? '->' suite;
 
 returnType : Void | varType;
 varType : builtinType | Identifier | varType ('[' ']')+;

@@ -358,15 +358,15 @@ public interface MxListener extends ParseTreeListener {
 	 */
 	void exitAssignExpr(MxParser.AssignExprContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link MxParser#lamdaexpression}.
+	 * Enter a parse tree produced by {@link MxParser#lambdaexpression}.
 	 * @param ctx the parse tree
 	 */
-	void enterLamdaexpression(MxParser.LamdaexpressionContext ctx);
+	void enterLambdaexpression(MxParser.LambdaexpressionContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link MxParser#lamdaexpression}.
+	 * Exit a parse tree produced by {@link MxParser#lambdaexpression}.
 	 * @param ctx the parse tree
 	 */
-	void exitLamdaexpression(MxParser.LamdaexpressionContext ctx);
+	void exitLambdaexpression(MxParser.LambdaexpressionContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link MxParser#returnType}.
 	 * @param ctx the parse tree

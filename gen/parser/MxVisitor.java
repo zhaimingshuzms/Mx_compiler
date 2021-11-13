@@ -217,11 +217,11 @@ public interface MxVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitAssignExpr(MxParser.AssignExprContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link MxParser#lamdaexpression}.
+	 * Visit a parse tree produced by {@link MxParser#lambdaexpression}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitLamdaexpression(MxParser.LamdaexpressionContext ctx);
+	T visitLambdaexpression(MxParser.LambdaexpressionContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link MxParser#returnType}.
 	 * @param ctx the parse tree
