@@ -1,13 +1,11 @@
-import java.io.FileInputStream;
 import java.io.InputStream;
-import java.security.spec.RSAOtherPrimeInfo;
 
-import error.MxErrorListener;
-import ast.ASTVisitor;
-import ast.RootNode;
-import error.error;
-import frontend.ASTBuilder;
-import frontend.SemanticChecker;
+import semantic.error.MxErrorListener;
+import semantic.ast.ASTVisitor;
+import semantic.ast.RootNode;
+import semantic.error.error;
+import semantic.frontend.ASTBuilder;
+import semantic.frontend.SemanticChecker;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
