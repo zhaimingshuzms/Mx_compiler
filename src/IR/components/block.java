@@ -4,8 +4,8 @@ import java.util.ArrayList;
 
 public class block {
     public String LabelName;
-    public ArrayList<LLVMoperand> list;
-    void add(LLVMoperand e){
+    public ArrayList<LLVMoperation> list;
+    public void add(LLVMoperation e){
         list.add(e);
     }
 

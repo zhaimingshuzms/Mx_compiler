@@ -1,9 +1,10 @@
 package IR.components;
 
 public class brOpe extends LLVMoperation{
-    public block cond,ifTrue,ifFalse;
+    public entity cond;
+    public block ifTrue,ifFalse;
     public block dest;
-    public brOpe(block cond,block ifTrue,block ifFalse){
+    public brOpe(entity cond,block ifTrue,block ifFalse){
         this.cond=cond;
         this.ifTrue=ifTrue;
         this.ifFalse=ifFalse;

@@ -3,7 +3,6 @@ package semantic.frontend;
 import semantic.ast.*;
 import semantic.error.semanticError;
 import semantic.util.*;
-import semantic.util.ast.*;
 
 public class SemanticChecker implements ASTVisitor{
     public Scope currentScope;

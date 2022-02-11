@@ -1,5 +1,5 @@
 package semantic.ast;
-import MIR.entity;
+import IR.components.entity;
 import semantic.util.Type;
 import semantic.error.semanticError;
 import semantic.util.position;

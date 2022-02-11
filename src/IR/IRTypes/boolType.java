@@ -11,4 +11,14 @@ public class boolType extends IRType{
     public String toString(){
         return "i1";
     }
+
+    @Override
+    public IROperand defaultValue() {
+        return new boolConstant(false);
+    }
+
+    @Override
+    public boolean matches(IRType rhs) {
+        return rhs instanceof boolType;
+    }
 }
