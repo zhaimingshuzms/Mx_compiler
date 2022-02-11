@@ -18,4 +18,9 @@ public class arrayType extends IRType{
     public String toString(){
         return "["+length+" x "+baseType.toString()+"]";
     }
+
+    @Override
+    public IROperand defaultValue(){
+        
+    }
 }
